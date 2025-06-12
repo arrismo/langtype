@@ -8,19 +8,20 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Timer, RotateCcw, Play, Pause, Trophy, Target, Zap } from "lucide-react"
 import { ResultsModal } from "./components/results-modal"
-import { sampleTexts } from "./data/texts"
+import { samplePrompts, Prompt, Language as AppLanguage } from "./data/texts"
 import { ThemeToggle } from "./components/theme-toggle"
 import { useTheme } from "./providers/theme-provider"
 
 type TestMode = "practice" | "time" | "words"
-type Language = "english" | "spanish"
+type Language = AppLanguage // Using the imported Language type
 
 export default function TypingTest() {
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
   const [currentMode, setCurrentMode] = useState<TestMode>("practice")
-  const [currentLanguage, setCurrentLanguage] = useState<Language>("english")
+  const [sourceLanguage, setSourceLanguage] = useState<Language>("english");
+  const [translationLanguage, setTranslationLanguage] = useState<Language>("spanish")
   const [timeSetting, setTimeSetting] = useState(30)
   const [wordCountSetting, setWordCountSetting] = useState(25)
   const [timeLeft, setTimeLeft] = useState(30)
@@ -33,32 +34,26 @@ export default function TypingTest() {
   const [correctChars, setCorrectChars] = useState(0)
   const [totalChars, setTotalChars] = useState(0)
   const [showResults, setShowResults] = useState(false)
-  const [progress, setProgress] = useState(0)
+  const [progress, setProgress] = useState(0);
+  const [targetTranslationText, setTargetTranslationText] = useState("")
 
-  const inputRef = useRef<HTMLTextAreaElement>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   const generateText = useCallback(() => {
-    const texts = sampleTexts[currentLanguage]
-    if (currentMode === "words") {
-      const wordsNeeded = wordCountSetting
-      let result = ""
-      let wordCount = 0
+    const randomPrompt = samplePrompts[Math.floor(Math.random() * samplePrompts.length)];
+    if (!randomPrompt) return { source: "", translation: "" };
 
-      while (wordCount < wordsNeeded) {
-        const randomText = texts[Math.floor(Math.random() * texts.length)]
-        const words = randomText.split(" ")
-        for (const word of words) {
-          if (wordCount >= wordsNeeded) break
-          result += (wordCount > 0 ? " " : "") + word
-          wordCount++
-        }
-      }
-      return result
-    } else {
-      return texts[Math.floor(Math.random() * texts.length)]
+    let sourceText = randomPrompt[sourceLanguage] || "";
+    let translationText = randomPrompt[translationLanguage] || "";
+
+    if (currentMode === "words") {
+      const sourceWords = sourceText.split(" ").slice(0, wordCountSetting);
+      const translationWords = translationText.split(" ").slice(0, wordCountSetting); // Assuming word-to-word correspondence for simplicity here
+      sourceText = sourceWords.join(" ");
+      translationText = translationWords.join(" ");
     }
-  }, [currentLanguage, currentMode, wordCountSetting])
+    return { source: sourceText, translation: translationText };
+  }, [sourceLanguage, translationLanguage, currentMode, wordCountSetting])
 
   const initializeTest = useCallback(() => {
     setTestActive(false)
@@ -69,14 +64,16 @@ export default function TypingTest() {
     setAccuracy(0)
     setCorrectChars(0)
     setTotalChars(0)
-    setProgress(0)
-    setCurrentText(generateText())
+    setProgress(0);
+    const generated = generateText();
+    setCurrentText(generated.source);
+    setTargetTranslationText(generated.translation);
     if (currentMode === "time") {
       setTimeLeft(timeSetting)
     }
     setShowResults(false)
-    inputRef.current?.focus()
-  }, [generateText, currentMode, timeSetting])
+    // inputRef.current?.focus() // Removed as textarea is gone
+  }, [generateText, currentMode, timeSetting, sourceLanguage, translationLanguage])
 
   const startTest = useCallback(() => {
     if (testActive) return
@@ -110,89 +107,162 @@ export default function TypingTest() {
     setShowResults(true)
   }, [startTime, correctChars, totalChars])
 
-  const handleInput = useCallback(
-    (value: string) => {
-      if (!testActive && value.length > 0) {
-        startTest()
+  const handleKeyPressLogic = useCallback((key: string) => {
+    if (showResults) return;
+    // Prevent typing past the end in non-time modes, unless it's backspace
+    if (key !== "Backspace" && testActive && typedText.length >= targetTranslationText.length && currentMode !== 'time') return;
+
+    let newTypedText = typedText;
+
+    if (key === "Backspace") {
+      if (newTypedText.length > 0) {
+        newTypedText = newTypedText.slice(0, -1);
       }
-
-      setTypedText(value)
-
-      let correct = 0
-      const total = value.length
-
-      for (let i = 0; i < value.length && i < currentText.length; i++) {
-        if (value[i] === currentText[i]) {
-          correct++
+    } else if (key.length === 1) { // Character key (letters, numbers, space, symbols)
+      if (!testActive && newTypedText.length === 0) {
+        startTest(); // Start test on the first character typed
+      }
+      // Only add char if test is active or it's the first char to start the test
+      // And ensure not to type beyond currentText in practice/words mode
+      if (testActive || (newTypedText.length === 0)) {
+        if (currentMode === 'time' || newTypedText.length < targetTranslationText.length) {
+           newTypedText += key;
         }
       }
+    } else {
+      return; // Ignore other keys like Enter, Shift, Ctrl, etc.
+    }
 
-      setCorrectChars(correct)
-      setTotalChars(total)
+    setTypedText(newTypedText);
 
-      // Calculate live stats
-      if (startTime && total > 0) {
-        const currentTime = Date.now()
-        const timeElapsed = (currentTime - startTime) / 60000 // minutes
-        if (timeElapsed > 0) {
-          const liveWpm = Math.round(correct / 5 / timeElapsed)
-          setWpm(Math.max(0, liveWpm))
-        }
-        const liveAccuracy = Math.round((correct / total) * 100)
-        setAccuracy(Math.max(0, liveAccuracy))
+    let correct = 0;
+    const total = newTypedText.length;
+    for (let i = 0; i < newTypedText.length && i < targetTranslationText.length; i++) {
+      if (newTypedText[i] === targetTranslationText[i]) {
+        correct++;
       }
+    }
+    setCorrectChars(correct);
+    setTotalChars(total);
 
-      // Calculate progress
-      const progressPercent = (value.length / currentText.length) * 100
-      setProgress(Math.min(100, progressPercent))
-
-      // Check completion
-      if ((currentMode === "words" || currentMode === "practice") && value.length >= currentText.length) {
-        endTest()
+    if (startTime && total > 0) {
+      const currentTime = Date.now();
+      const timeElapsed = (currentTime - startTime) / 60000; // minutes
+      if (timeElapsed > 0) {
+        const liveWpm = Math.round(correct / 5 / timeElapsed);
+        setWpm(Math.max(0, liveWpm));
       }
-    },
-    [testActive, startTest, currentText, startTime, currentMode, endTest],
-  )
+      const liveAccuracy = Math.round((correct / total) * 100);
+      setAccuracy(Math.max(0, liveAccuracy));
+    } else if (total === 0) { // Reset stats if typedText is empty
+      setWpm(0);
+      setAccuracy(0);
+    }
 
-  const renderText = () => {
-    return currentText.split("").map((char, index) => {
-      let className = "transition-colors duration-75"
+    const progressPercent = targetTranslationText.length > 0 ? (newTypedText.length / targetTranslationText.length) * 100 : 0;
+    setProgress(Math.min(100, progressPercent));
 
-      if (index < typedText.length) {
-        if (typedText[index] === char) {
-          className += isDark ? " text-green-400 bg-green-400/10" : " text-green-600 bg-green-100"
-        } else {
-          className += isDark ? " text-red-400 bg-red-400/20" : " text-red-600 bg-red-100"
-        }
-      } else if (index === typedText.length) {
-        className += isDark ? " bg-blue-400/30" : " bg-blue-200"
-      } else {
-        className += isDark ? " text-gray-400" : " text-gray-700"
+    // Check completion for words/practice mode
+    if ((currentMode === "words" || currentMode === "practice") && newTypedText.length >= targetTranslationText.length && targetTranslationText.length > 0) {
+      // End test if all characters are typed (correctly or not, matching currentText length)
+      endTest();
+    }
+  }, [typedText, targetTranslationText, testActive, startTest, endTest, startTime, currentMode, showResults, setTypedText, setCorrectChars, setTotalChars, setWpm, setAccuracy, setProgress]);
+
+  const renderSourcePromptDisplay = () => {
+    if (!currentText) return null;
+    return currentText.split("").map((char: string, index: number) => {
+      let className = "transition-colors duration-75";
+      if (index < typedText.length) { // Corresponds to the portion of the source text for which translation has been typed
+        className += isDark ? " text-gray-500" : " text-gray-400"; // Dimmed text
+      } else if (index === typedText.length) { // Current character in source text (cursor position)
+        className += isDark ? " bg-blue-400/30" : " bg-blue-200"; // Cursor highlight
+      } else { // Upcoming characters in source text
+        className += isDark ? " text-gray-400" : " text-gray-700";
       }
-
       return (
-        <span key={index} className={className}>
+        <span key={`source-prompt-${index}`} className={className}>
           {char}
         </span>
-      )
-    })
-  }
+      );
+    });
+  };
+
+  const renderTypedTranslation = () => {
+    if (!targetTranslationText && typedText.length === 0) return null; // Return null if no target and no typed text
+    // If there's typed text but no target (e.g. during initialization or error), display typed text without highlights
+    if (!targetTranslationText && typedText.length > 0) {
+      return typedText.split("").map((char: string, index: number) => (
+        <span key={`typed-${index}`} className={isDark ? "text-gray-300" : "text-gray-700"}>{char}</span>
+      )).concat(
+        testActive || typedText.length > 0 ? 
+        [<span key="typed-cursor" className={`cursor ${isDark ? "bg-blue-400/30" : "bg-blue-200"} opacity-100 animate-pulse`}>&nbsp;</span>] 
+        : []
+      );
+    }
+
+    return typedText.split("").map((char: string, index: number) => {
+      let className = "transition-colors duration-75 ";
+      if (index < targetTranslationText.length) {
+        if (char === targetTranslationText[index]) {
+          className += isDark ? "text-green-400" : "text-green-600";
+        } else {
+          className += isDark ? "text-red-400 bg-red-400/20" : "text-red-600 bg-red-100"; // Keep bg for incorrect
+        }
+      }
+      return <span key={`typed-${index}`} className={className}>{char}</span>;
+    }).concat(
+      // Add a cursor at the end of the typed text
+      testActive || typedText.length > 0 ? 
+      [<span key="typed-cursor" className={`cursor ${isDark ? "bg-blue-400/30" : "bg-blue-200"} opacity-100 animate-pulse`}>&nbsp;</span>] 
+      : []
+    );
+  };
 
   useEffect(() => {
     initializeTest()
-  }, [initializeTest])
+  }, [initializeTest, sourceLanguage, translationLanguage, currentMode, timeSetting, wordCountSetting])
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Tab") {
-        e.preventDefault()
-        initializeTest()
+        e.preventDefault();
+        initializeTest();
+        return;
       }
-    }
 
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [initializeTest])
+      // If results are shown, or if an input/textarea/select elsewhere has focus, generally ignore typing keys
+      const activeEl = document.activeElement;
+      if (showResults || (activeEl && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA" || activeEl.tagName === "SELECT" || activeEl.hasAttribute("role")) && activeEl.getAttribute("role") !== "button" && activeEl.getAttribute("role") !== "menuitem")) {
+        // Allow Enter/Escape for modals, etc. Tab is handled above.
+        if (e.key !== "Enter" && e.key !== "Escape") {
+             return;
+        }
+      }
+      
+      // Prevent default for space and backspace to avoid unwanted browser actions
+      if (e.key === " ") {
+        e.preventDefault();
+      }
+      if (e.key === "Backspace") {
+        e.preventDefault(); 
+      }
+
+      // Process relevant typing keys
+      if (e.key === "Backspace") {
+        handleKeyPressLogic("Backspace");
+      } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        // e.key.length === 1 captures letters, numbers, symbols, and space.
+        // Check for ctrlKey/metaKey/altKey to avoid capturing shortcuts.
+        handleKeyPressLogic(e.key);
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleGlobalKeyDown);
+    };
+  }, [initializeTest, handleKeyPressLogic, showResults]);
 
   return (
     <div
@@ -225,8 +295,31 @@ export default function TypingTest() {
           <CardContent className="p-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="space-y-2">
-                <label className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>Language</label>
-                <Select value={currentLanguage} onValueChange={(value: Language) => setCurrentLanguage(value)}>
+                <label className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>Source Language</label>
+                <Select value={sourceLanguage} onValueChange={(value: Language) => {
+                  setSourceLanguage(value);
+                  if (value === translationLanguage) {
+                    setTranslationLanguage(value === "english" ? "spanish" : "english");
+                  }
+                }}>
+                  <SelectTrigger className={isDark ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="english">English</SelectItem>
+                    <SelectItem value="spanish">Spanish</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>Translation Language</label>
+                <Select value={translationLanguage} onValueChange={(value: Language) => {
+                  setTranslationLanguage(value);
+                  if (value === sourceLanguage) {
+                    setSourceLanguage(value === "english" ? "spanish" : "english");
+                  }
+                }}>
                   <SelectTrigger className={isDark ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"}>
                     <SelectValue />
                   </SelectTrigger>
@@ -312,6 +405,15 @@ export default function TypingTest() {
           </CardContent>
         </Card>
 
+            {/* Source Prompt Display Area */}
+            <Card className={`mt-6 w-full max-w-4xl mx-auto ${isDark ? "bg-gray-800/50 border-gray-700/50" : "bg-gray-50/50 border-gray-200/80 shadow-md"} backdrop-blur-sm`}>
+              <CardContent className="p-6 text-lg font-mono text-gray-500 tracking-wider leading-relaxed break-all min-h-[100px] flex items-center justify-center">
+                <div className={`text-center w-full ${isDark ? "text-gray-400" : "text-gray-600"}`} style={{ maxWidth: "80ch" }}>
+                  {currentText ? renderSourcePromptDisplay() : <span className={isDark ? 'text-gray-600' : 'text-gray-400'}>Loading source prompt...</span>}
+                </div>
+              </CardContent>
+            </Card>
+
         {/* Stats Bar */}
         <div className="flex justify-center mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl w-full">
@@ -393,52 +495,11 @@ export default function TypingTest() {
           }`}
         >
           <CardContent className="p-8">
-            <div className="text-xl leading-relaxed font-mono tracking-wide">{renderText()}</div>
+            <div className="text-xl leading-relaxed font-mono tracking-wide">{renderTypedTranslation()}</div>
           </CardContent>
         </Card>
 
-        {/* Input Area */}
-        <Card
-          className={`mb-8 ${
-            isDark ? "bg-gray-800/50 border-gray-700" : "bg-white/80 border-gray-200 shadow-lg backdrop-blur-sm"
-          }`}
-        >
-          <CardContent className="p-6">
-            <textarea
-              ref={inputRef}
-              value={typedText}
-              onChange={(e) => handleInput(e.target.value)}
-              placeholder={testActive ? "Keep typing..." : "Click here and start typing to begin the test"}
-              className={`w-full h-32 rounded-lg p-4 resize-none focus:ring-2 focus:border-transparent ${
-                isDark
-                  ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-blue-400"
-                  : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 shadow-inner"
-              }`}
-              disabled={showResults}
-            />
-            <div className="mt-4 flex justify-between items-center">
-              <div className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
-                Press Tab to restart • {currentText.length} characters total
-              </div>
-              <Badge
-                variant="outline"
-                className={isDark ? "border-gray-600 text-gray-300" : "border-gray-300 text-gray-700 bg-white/50"}
-              >
-                {testActive ? (
-                  <>
-                    <Pause className="w-3 h-3 mr-1" />
-                    Active
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-3 h-3 mr-1" />
-                    Ready
-                  </>
-                )}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Input is now handled globally by listening to keydown events */}
 
         {/* Results Modal */}
         <ResultsModal
@@ -447,7 +508,7 @@ export default function TypingTest() {
           onRestart={initializeTest}
           results={{
             mode: currentMode,
-            language: currentLanguage,
+            language: sourceLanguage,
             wpm,
             accuracy,
             correctChars,
