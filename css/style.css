@@ -24,17 +24,48 @@ h1 {
     margin-bottom: 25px;
 }
 
-.settings {
+/* .settings class removed as settings are now in a grid */
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
     margin-bottom: 20px;
+    align-items: end; /* Aligns items to the bottom of their cell */
 }
 
-#language-select {
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align labels and selects to the left */
+}
+
+.setting-item label {
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+#language-select,
+#test-mode-select,
+#time-select,
+#words-select {
     padding: 10px;
     border-radius: 4px;
     border: 1px solid #555;
     font-size: 1em;
     background-color: #555;
     color: #f0f0f0;
+    width: 100%; /* Make selects take full width of their grid cell */
+}
+
+#timer-display {
+    font-size: 1.5em;
+    color: #61dafb;
+    margin-bottom: 15px;
+    font-weight: bold;
+    display: block;
+    text-align: center;
 }
 
 #text-to-type-container {
@@ -67,8 +98,8 @@ h1 {
     text-decoration-color: #ff6b6b;
 }
 
-#typing-input {
-    width: calc(100% - 22px); 
+#typing-input { /* Adjusted from previous */
+    width: calc(100% - 24px); /* Account for padding */
     padding: 12px;
     margin-bottom: 20px;
     border-radius: 4px;
@@ -77,6 +108,7 @@ h1 {
     background-color: #555;
     color: #f0f0f0;
     resize: none; 
+    /* height: auto; /* Allow it to naturally size with rows attribute */
 }
 
 #typing-input:focus {
@@ -102,7 +134,7 @@ h1 {
     color: #61dafb;
 }
 
-#next-text-btn {
+#start-reset-btn { /* Renamed from #next-text-btn */
     padding: 12px 25px;
     font-size: 1em;
     color: #fff;
@@ -111,10 +143,94 @@ h1 {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-top: 10px; /* Added some margin */
 }
 
-#next-text-btn:hover {
+#start-reset-btn:hover {
     background-color: #0056b3;
+}
+
+/* Results Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6); /* Darker overlay */
+    display: none; /* Hidden by default, shown by JS */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #4f4f4f; /* Darker modal background */
+    margin: auto;
+    padding: 25px 30px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    text-align: left;
+    color: #f0f0f0;
+    position: relative; /* For close button positioning */
+}
+
+.modal-content h2 {
+    text-align: center;
+    color: #61dafb;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.modal-content p {
+    font-size: 1.1em;
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.modal-content p span {
+    font-weight: bold;
+    color: #72f1b8; /* Green for positive stats */
+}
+
+
+.close-btn {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    transition: color 0.2s ease-in-out;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#restart-test-btn {
+    display: block;
+    width: 50%;
+    margin: 25px auto 0;
+    padding: 12px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #28a745; /* Green for restart */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#restart-test-btn:hover {
+    background-color: #218838;
 }
 
 /* For modern scrollbars if desired, optional */

@@ -9,24 +9,103 @@
 <body>
     <div class="container">
         <h1>LangType</h1>
-        <div class="settings">
-            <label for="language-select">Language:</label>
-            <select id="language-select">
-                <option value="english">English</option>
-                <option value="spanish">Spanish</option>
-            </select>
+
+        <div class="settings-grid">
+            <div class="setting-item">
+                <label for="language-select">Language:</label>
+                <select id="language-select">
+                    <option value="english">English</option>
+                    <option value="spanish">Spanish</option>
+                </select>
+            </div>
+
+            <div class="setting-item">
+                <label for="test-mode-select">Mode:</label>
+                <select id="test-mode-select">
+                    <option value="practice" selected>Practice</option>
+                    <option value="time">Time</option>
+                    <option value="words">Words</option>
+                </select>
+            </div>
+
+            <div class="setting-item" id="time-options-container" style="display: none;">
+                <label for="time-select">Duration:</label>
+                <select id="time-select">
+                    <option value="15">15s</option>
+                    <option value="30" selected>30s</option>
+                    <option value="60">60s</option>
+                    <option value="120">120s</option>
+                </select>
+            </div>
+
+            <div class="setting-item" id="words-options-container" style="display: none;">
+                <label for="words-select">Words:</label>
+                <select id="words-select">
+                    <option value="10">10</option>
+                    <option value="25" selected>25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
         </div>
+
+        <div id="timer-display" style="display: none;">Time Left: <span id="time-left">0</span>s</div>
+
         <div id="text-to-type-container">
             <p id="text-to-type"></p>
         </div>
-        <textarea id="typing-input" rows="5" placeholder="Start typing here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+
+        <textarea id="typing-input" rows="3" placeholder="Start typing here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+        
         <div class="stats">
             <p>WPM: <span id="wpm">0</span></p>
             <p>Accuracy: <span id="accuracy">0</span>%</p>
         </div>
-        <button id="next-text-btn">Next Text</button>
+
+        <button id="start-reset-btn">Start</button> <!-- Initial text: Start -->
+
     </div>
+
+    <!-- Results Modal -->
+    <div id="results-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-btn" id="close-results-btn">&times;</span>
+            <h2>Test Results</h2>
+            <p>Mode: <span id="result-mode"></span></p>
+            <p>WPM: <span id="result-wpm"></span></p>
+            <p>Accuracy: <span id="result-accuracy"></span>%</p>
+            <p>Correct Chars: <span id="result-correct-chars"></span></p>
+            <p>Incorrect Chars: <span id="result-incorrect-chars"></span></p>
+            <p>Time Taken: <span id="result-time-taken"></span>s</p>
+            <button id="restart-test-btn-modal">Try Again</button> <!-- Renamed to avoid conflict -->
+        </div>
+    </div>
+
     <script src="data/texts.js"></script>
     <script src="js/main.js"></script>
+</body>
+</html>
+            <p>Correct Chars: <span id="result-correct-chars"></span></p>
+            <p>Incorrect Chars: <span id="result-incorrect-chars"></span></p>
+            <p>Time Taken: <span id="result-time-taken"></span>s</p>
+            <button id="restart-test-btn">Try Again</button>
+        </div>
+    </div>
+
+    <script src="data/texts.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Results Modal -->
+    <div id="results-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h2>Test Results</h2>
+            <p>WPM: <span id="results-wpm">0</span></p>
+            <p>Accuracy: <span id="results-accuracy">0</span>%</p>
+            <p>Time Taken: <span id="results-time">0</span>s</p>
+            <p>Correct Characters: <span id="results-correct-chars">0</span></p>
+            <p>Errors: <span id="results-errors">0</span></p>
+            <button id="restart-test-btn">Try Again</button>
+        </div>
+    </div>
 </body>
 </html>
