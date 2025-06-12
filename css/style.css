@@ -1,0 +1,133 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #333; /* Darker background */
+    color: #f0f0f0; /* Lighter text for contrast */
+}
+
+.container {
+    background-color: #444; /* Slightly lighter dark container */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    text-align: center;
+    width: 90%;
+    max-width: 700px;
+}
+
+h1 {
+    color: #61dafb; /* A bright accent color */
+    margin-bottom: 25px;
+}
+
+.settings {
+    margin-bottom: 20px;
+}
+
+#language-select {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    font-size: 1em;
+    background-color: #555;
+    color: #f0f0f0;
+}
+
+#text-to-type-container {
+    margin: 25px 0;
+    padding: 20px;
+    border: 1px solid #555;
+    border-radius: 4px;
+    background-color: #3a3a3a; /* Darker background for text area */
+    min-height: 70px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3em; /* Larger font for readability */
+    line-height: 1.7;
+}
+
+#text-to-type {
+    color: #e0e0e0; /* Light grey for the text to type */
+    white-space: pre-wrap; 
+}
+
+#text-to-type .correct {
+    color: #72f1b8; /* Bright green for correct characters */
+}
+
+#text-to-type .incorrect {
+    color: #ff6b6b; /* Bright red for incorrect characters */
+    background-color: rgba(255, 107, 107, 0.2); /* Slight background highlight for errors */
+    text-decoration: underline;
+    text-decoration-color: #ff6b6b;
+}
+
+#typing-input {
+    width: calc(100% - 22px); 
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    border: 1px solid #555;
+    font-size: 1.2em;
+    background-color: #555;
+    color: #f0f0f0;
+    resize: none; 
+}
+
+#typing-input:focus {
+    outline: none;
+    border-color: #61dafb;
+    box-shadow: 0 0 5px rgba(97, 218, 251, 0.5);
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 25px;
+    font-size: 1.1em;
+}
+
+.stats p {
+    margin: 0;
+    color: #ccc;
+}
+
+#wpm, #accuracy {
+    font-weight: bold;
+    color: #61dafb;
+}
+
+#next-text-btn {
+    padding: 12px 25px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#next-text-btn:hover {
+    background-color: #0056b3;
+}
+
+/* For modern scrollbars if desired, optional */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #333;
+}
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}

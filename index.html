@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangType</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>LangType</h1>
+        <div class="settings">
+            <label for="language-select">Language:</label>
+            <select id="language-select">
+                <option value="english">English</option>
+                <option value="spanish">Spanish</option>
+            </select>
+        </div>
+        <div id="text-to-type-container">
+            <p id="text-to-type"></p>
+        </div>
+        <textarea id="typing-input" rows="5" placeholder="Start typing here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+        <div class="stats">
+            <p>WPM: <span id="wpm">0</span></p>
+            <p>Accuracy: <span id="accuracy">0</span>%</p>
+        </div>
+        <button id="next-text-btn">Next Text</button>
+    </div>
+    <script src="data/texts.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
