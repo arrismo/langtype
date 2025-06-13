@@ -9,14 +9,10 @@ export function ThemeToggle() {
 
   return (
     <Button
-      variant="outline"
+      variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className={`rounded-full ${
-        theme === "light"
-          ? "bg-white text-gray-800 border-gray-200 hover:bg-gray-100"
-          : "bg-gray-800 text-gray-200 border-gray-700 hover:bg-gray-700"
-      }`}
+      className="rounded-full text-gray-400 hover:text-yellow-400 hover:bg-gray-800 transition-colors"
       aria-label="Toggle theme"
     >
       {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}

@@ -32,11 +32,11 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 17 17% 7%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    --card: 17 17% 7%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    --popover: 17 17% 7%;
     --popover-foreground: 210 40% 98%;
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
@@ -117,4 +117,23 @@ body {
 .badge,
 .progress {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Monkeytype-style cursor */
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  margin-left: 1px;
+  border-radius: 1px;
+}
+
+/* Monospace font for typing area */
+.font-mono {
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+}
+
+/* Smooth progress bar animation */
+.progress-bar {
+  transition: width 0.3s ease-out;
 }
