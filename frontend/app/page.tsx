@@ -12,19 +12,19 @@ import { samplePrompts, Prompt, Language as AppLanguage } from "./data/texts"
 import { ThemeToggle } from "./components/theme-toggle"
 import { useTheme } from "./providers/theme-provider"
 
-type TestMode = "practice" | "time" | "words"
+type TestMode = "easy" | "hard"
 type Language = AppLanguage // Using the imported Language type
+
+const DEFAULT_DURATION = 60; // seconds
 
 export default function TypingTest() {
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
-  const [currentMode, setCurrentMode] = useState<TestMode>("practice")
+  const [currentMode, setCurrentMode] = useState<TestMode>("easy")
   const [sourceLanguage, setSourceLanguage] = useState<Language>("english");
   const [translationLanguage, setTranslationLanguage] = useState<Language>("spanish")
-  const [timeSetting, setTimeSetting] = useState(30)
-  const [wordCountSetting, setWordCountSetting] = useState(25)
-  const [timeLeft, setTimeLeft] = useState(30)
+  const [timeElapsed, setTimeElapsed] = useState(0)
   const [testActive, setTestActive] = useState(false)
   const [startTime, setStartTime] = useState<number | null>(null)
   const [currentText, setCurrentText] = useState("")
@@ -47,19 +47,14 @@ export default function TypingTest() {
     let sourceText = randomPrompt[sourceLanguage] || "";
     let translationText = randomPrompt[translationLanguage] || "";
 
-    if (currentMode === "words") {
-      const sourceWords = sourceText.split(" ").slice(0, wordCountSetting);
-      const translationWords = translationText.split(" ").slice(0, wordCountSetting); // Assuming word-to-word correspondence for simplicity here
-      sourceText = sourceWords.join(" ");
-      translationText = translationWords.join(" ");
-    }
     return { source: sourceText, translation: translationText };
-  }, [sourceLanguage, translationLanguage, currentMode, wordCountSetting])
+  }, [sourceLanguage, translationLanguage])
 
   const initializeTest = useCallback(() => {
     setTestActive(false)
     if (timerRef.current) clearInterval(timerRef.current)
     setStartTime(null)
+    setTimeElapsed(0)
     setTypedText("")
     setWpm(0)
     setAccuracy(0)
@@ -70,49 +65,37 @@ export default function TypingTest() {
     const generated = generateText();
     setCurrentText(generated.source);
     setTargetTranslationText(generated.translation);
-    if (currentMode === "time") {
-      setTimeLeft(timeSetting)
-    }
     setShowResults(false)
-    // inputRef.current?.focus() // Removed as textarea is gone
-  }, [generateText, currentMode, timeSetting, sourceLanguage, translationLanguage])
+  }, [generateText, sourceLanguage, translationLanguage])
 
   const startTest = useCallback(() => {
     if (testActive) return
     setTestActive(true)
-    setStartTime(Date.now())
-
-    if (currentMode === "time") {
-      timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            endTest()
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
-    }
-  }, [testActive, currentMode])
+    const now = Date.now()
+    setStartTime(now)
+    
+    // Start counting up from 0
+    timerRef.current = setInterval(() => {
+      setTimeElapsed(prev => prev + 1);
+    }, 1000);
+  }, [testActive])
 
   const endTest = useCallback(() => {
     setTestActive(false)
     if (timerRef.current) clearInterval(timerRef.current)
-
-    const endTime = Date.now()
-    const timeElapsed = startTime ? (endTime - startTime) / 1000 : 0
-    const finalWpm = timeElapsed > 0 ? Math.round(correctChars / 5 / (timeElapsed / 60)) : 0
+    
     const finalAccuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 0
+    const finalWpm = timeElapsed > 0 ? Math.round((correctChars / 5) / (timeElapsed / 60)) : 0
 
     setWpm(finalWpm)
     setAccuracy(finalAccuracy)
     setShowResults(true)
-  }, [startTime, correctChars, totalChars])
+  }, [correctChars, totalChars, timeElapsed])
 
   const handleKeyPressLogic = useCallback((key: string) => {
     if (showResults) return;
     // Prevent typing past the end in non-time modes, unless it's backspace
-    if (key !== "Backspace" && testActive && typedText.length >= targetTranslationText.length && currentMode !== 'time') return;
+    if (key !== "Backspace" && testActive && typedText.length >= targetTranslationText.length) return;
 
     let newTypedText = typedText;
 
@@ -127,7 +110,7 @@ export default function TypingTest() {
       // Only add char if test is active or it's the first char to start the test
       // And ensure not to type beyond currentText in practice/words mode
       if (testActive || (newTypedText.length === 0)) {
-        if (currentMode === 'time' || newTypedText.length < targetTranslationText.length) {
+        if (newTypedText.length < targetTranslationText.length) {
            newTypedText += key;
         }
       }
@@ -147,16 +130,7 @@ export default function TypingTest() {
     setCorrectChars(correct);
     setTotalChars(total);
 
-    if (startTime && total > 0) {
-      const currentTime = Date.now();
-      const timeElapsed = (currentTime - startTime) / 60000; // minutes
-      if (timeElapsed > 0) {
-        const liveWpm = Math.round(correct / 5 / timeElapsed);
-        setWpm(Math.max(0, liveWpm));
-      }
-      const liveAccuracy = Math.round((correct / total) * 100);
-      setAccuracy(Math.max(0, liveAccuracy));
-    } else if (total === 0) { // Reset stats if typedText is empty
+    if (total === 0) { // Reset stats if typedText is empty
       setWpm(0);
       setAccuracy(0);
     }
@@ -165,7 +139,7 @@ export default function TypingTest() {
     setProgress(Math.min(100, progressPercent));
 
     // Check completion for words/practice mode
-    if ((currentMode === "words" || currentMode === "practice") && newTypedText.length >= targetTranslationText.length && targetTranslationText.length > 0) {
+    if (newTypedText.length >= targetTranslationText.length && targetTranslationText.length > 0) {
       // End test if all characters are typed (correctly or not, matching currentText length)
       endTest();
     }
@@ -196,12 +170,12 @@ export default function TypingTest() {
     }
 
     setCurrentHighlightWordIndex(highlightIndex);
-  }, [typedText, targetTranslationText, testActive, startTest, endTest, startTime, currentMode, showResults, currentText]);
+  }, [typedText, targetTranslationText, testActive, startTest, endTest, startTime, currentText]);
 
   const renderSourcePromptDisplay = () => {
     if (!currentText) return null;
     const sourceWords = currentText.split(" ").filter((w) => w !== "");
-    return sourceWords.map((word, index) => {
+    const wordSpans = sourceWords.map((word, index) => {
       let className = "transition-colors duration-75";
       if (index < currentHighlightWordIndex) {
         className += isDark ? " text-gray-500" : " text-gray-400"; // Dimmed words
@@ -216,6 +190,19 @@ export default function TypingTest() {
         </span>
       );
     });
+
+    const translationHint = currentMode === "easy" ? (
+      <div className="mt-2 text-sm italic text-purple-500">
+        {targetTranslationText}
+      </div>
+    ) : null;
+
+    return (
+      <div>
+        {wordSpans}
+        {translationHint}
+      </div>
+    );
   };
 
   const renderTypedTranslation = () => {
@@ -251,7 +238,7 @@ export default function TypingTest() {
 
   useEffect(() => {
     initializeTest()
-  }, [initializeTest, sourceLanguage, translationLanguage, currentMode, timeSetting, wordCountSetting])
+  }, [initializeTest, sourceLanguage, translationLanguage])
 
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
@@ -367,55 +354,13 @@ export default function TypingTest() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="practice">Practice</SelectItem>
-                    <SelectItem value="time">Time</SelectItem>
-                    <SelectItem value="words">Words</SelectItem>
+                    <SelectItem value="easy">Easy</SelectItem>
+                    <SelectItem value="hard">Hard</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              {currentMode === "time" && (
-                <div className="space-y-2">
-                  <label className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                    Duration
-                  </label>
-                  <Select
-                    value={timeSetting.toString()}
-                    onValueChange={(value) => setTimeSetting(Number.parseInt(value))}
-                  >
-                    <SelectTrigger className={isDark ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="15">15s</SelectItem>
-                      <SelectItem value="30">30s</SelectItem>
-                      <SelectItem value="60">60s</SelectItem>
-                      <SelectItem value="120">120s</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-              {currentMode === "words" && (
-                <div className="space-y-2">
-                  <label className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>Words</label>
-                  <Select
-                    value={wordCountSetting.toString()}
-                    onValueChange={(value) => setWordCountSetting(Number.parseInt(value))}
-                  >
-                    <SelectTrigger className={isDark ? "bg-gray-700 border-gray-600" : "bg-white border-gray-300"}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
+              {/* Duration selector removed */}
               <div className="flex items-end">
                 <Button
                   onClick={initializeTest}
@@ -477,39 +422,19 @@ export default function TypingTest() {
               </CardContent>
             </Card>
 
-            {currentMode === "time" ? (
-              <Card
-                className={
-                  isDark ? "bg-gray-800/50 border-gray-700" : "bg-white/80 border-gray-200 shadow-lg backdrop-blur-sm"
-                }
-              >
-                <CardContent className="p-4 text-center">
-                  <div className="flex items-center justify-center mb-2">
-                    <Timer className={`w-5 h-5 mr-2 ${isDark ? "text-blue-400" : "text-blue-600"}`} />
-                    <span className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>Time</span>
-                  </div>
-                  <div className={`text-2xl font-bold ${isDark ? "text-blue-400" : "text-blue-600"}`}>{timeLeft}s</div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card
-                className={
-                  isDark ? "bg-gray-800/50 border-gray-700" : "bg-white/80 border-gray-200 shadow-lg backdrop-blur-sm"
-                }
-              >
-                <CardContent className="p-4 text-center">
-                  <div className="flex items-center justify-center mb-2">
-                    <Trophy className={`w-5 h-5 mr-2 ${isDark ? "text-purple-400" : "text-purple-600"}`} />
-                    <span className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>
-                      Progress
-                    </span>
-                  </div>
-                  <div className={`text-2xl font-bold ${isDark ? "text-purple-400" : "text-purple-600"}`}>
-                    {Math.round(progress)}%
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            <Card
+              className={
+                isDark ? "bg-gray-800/50 border-gray-700" : "bg-white/80 border-gray-200 shadow-lg backdrop-blur-sm"
+              }
+            >
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <Timer className={`w-5 h-5 mr-2 ${isDark ? "text-blue-400" : "text-blue-600"}`} />
+                  <span className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>Time</span>
+                </div>
+                <div className={`text-2xl font-bold ${isDark ? "text-blue-400" : "text-blue-600"}`}>{timeElapsed}s</div>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
@@ -529,7 +454,19 @@ export default function TypingTest() {
           </CardContent>
         </Card>
 
-        {/* Input is now handled globally by listening to keydown events */}
+        {/* Translation Display */}
+        <Card className={`mb-6 ${
+          isDark ? "bg-gray-800/50 border-gray-700" : "bg-white/80 border-gray-200 shadow-lg backdrop-blur-sm"
+        }`}>
+          <CardContent className="p-6">
+            <div className={`text-lg font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+              Translation
+            </div>
+            <div className={`text-xl leading-relaxed font-mono tracking-wide ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
+              {targetTranslationText || 'No translation available'}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Results Modal */}
         <ResultsModal
