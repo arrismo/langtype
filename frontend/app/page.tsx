@@ -36,6 +36,7 @@ export default function TypingTest() {
   const [showResults, setShowResults] = useState(false)
   const [progress, setProgress] = useState(0);
   const [targetTranslationText, setTargetTranslationText] = useState("")
+  const [currentHighlightWordIndex, setCurrentHighlightWordIndex] = useState(0)
 
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -65,6 +66,7 @@ export default function TypingTest() {
     setCorrectChars(0)
     setTotalChars(0)
     setProgress(0);
+    setCurrentHighlightWordIndex(0);
     const generated = generateText();
     setCurrentText(generated.source);
     setTargetTranslationText(generated.translation);
@@ -167,22 +169,50 @@ export default function TypingTest() {
       // End test if all characters are typed (correctly or not, matching currentText length)
       endTest();
     }
-  }, [typedText, targetTranslationText, testActive, startTest, endTest, startTime, currentMode, showResults, setTypedText, setCorrectChars, setTotalChars, setWpm, setAccuracy, setProgress]);
+
+    // ----- WORD-BASED HIGHLIGHT CALCULATION -----
+    const sourceWordsArray = currentText.split(" ").filter((w) => w !== "");
+    const targetWordsArray = targetTranslationText.split(" ").filter((w) => w !== "");
+    const typedWordsArray = newTypedText.trim().split(" ").filter((w) => w !== "");
+
+    let highlightIndex = 0;
+    if (typedWordsArray.length === 0) {
+      highlightIndex = 0;
+    } else {
+      // If the last character typed is a space, we just finished a word
+      const atWordBoundary = newTypedText.endsWith(" ");
+      let currentTargetWordPos = atWordBoundary ? typedWordsArray.length : typedWordsArray.length - 1;
+
+      if (currentTargetWordPos >= targetWordsArray.length) {
+        // Translation complete – dim all source words
+        highlightIndex = sourceWordsArray.length;
+      } else if (currentTargetWordPos === targetWordsArray.length - 1) {
+        // Typing LAST target word – highlight LAST source word
+        highlightIndex = Math.max(0, sourceWordsArray.length - 1);
+      } else {
+        // Map 1-to-1 up to the penultimate source word
+        highlightIndex = Math.min(currentTargetWordPos, Math.max(0, sourceWordsArray.length - 2));
+      }
+    }
+
+    setCurrentHighlightWordIndex(highlightIndex);
+  }, [typedText, targetTranslationText, testActive, startTest, endTest, startTime, currentMode, showResults, currentText]);
 
   const renderSourcePromptDisplay = () => {
     if (!currentText) return null;
-    return currentText.split("").map((char: string, index: number) => {
+    const sourceWords = currentText.split(" ").filter((w) => w !== "");
+    return sourceWords.map((word, index) => {
       let className = "transition-colors duration-75";
-      if (index < typedText.length) { // Corresponds to the portion of the source text for which translation has been typed
-        className += isDark ? " text-gray-500" : " text-gray-400"; // Dimmed text
-      } else if (index === typedText.length) { // Current character in source text (cursor position)
-        className += isDark ? " bg-blue-400/30" : " bg-blue-200"; // Cursor highlight
-      } else { // Upcoming characters in source text
-        className += isDark ? " text-gray-400" : " text-gray-700";
+      if (index < currentHighlightWordIndex) {
+        className += isDark ? " text-gray-500" : " text-gray-400"; // Dimmed words
+      } else if (index === currentHighlightWordIndex) {
+        className += isDark ? " bg-blue-400/30" : " bg-blue-200"; // Active word highlight
+      } else {
+        className += isDark ? " text-gray-400" : " text-gray-700"; // Upcoming words
       }
       return (
-        <span key={`source-prompt-${index}`} className={className}>
-          {char}
+        <span key={`src-word-${index}`}>
+          <span className={className}>{word}</span>{" "}
         </span>
       );
     });
