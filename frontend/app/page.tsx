@@ -175,7 +175,7 @@ export default function TypingTest() {
   const renderSourcePromptDisplay = () => {
     if (!currentText) return null;
     const sourceWords = currentText.split(" ").filter((w) => w !== "");
-    const wordSpans = sourceWords.map((word, index) => {
+    return sourceWords.map((word, index) => {
       let className = "transition-colors duration-75";
       if (index < currentHighlightWordIndex) {
         className += isDark ? " text-gray-500" : " text-gray-400"; // Dimmed words
@@ -190,19 +190,6 @@ export default function TypingTest() {
         </span>
       );
     });
-
-    const translationHint = currentMode === "easy" ? (
-      <div className="mt-2 text-sm italic text-purple-500">
-        {targetTranslationText}
-      </div>
-    ) : null;
-
-    return (
-      <div>
-        {wordSpans}
-        {translationHint}
-      </div>
-    );
   };
 
   const renderTypedTranslation = () => {
@@ -454,19 +441,21 @@ export default function TypingTest() {
           </CardContent>
         </Card>
 
-        {/* Translation Display */}
-        <Card className={`mb-6 ${
-          isDark ? "bg-gray-800/50 border-gray-700" : "bg-white/80 border-gray-200 shadow-lg backdrop-blur-sm"
-        }`}>
-          <CardContent className="p-6">
-            <div className={`text-lg font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-              Translation
-            </div>
-            <div className={`text-xl leading-relaxed font-mono tracking-wide ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
-              {targetTranslationText || 'No translation available'}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Translation Display - Only show in Easy mode */}
+        {currentMode === 'easy' && (
+          <Card className={`mb-6 ${
+            isDark ? "bg-gray-800/50 border-gray-700" : "bg-white/80 border-gray-200 shadow-lg backdrop-blur-sm"
+          }`}>
+            <CardContent className="p-6">
+              <div className={`text-lg font-medium mb-3 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                Translation
+              </div>
+              <div className={`text-xl leading-relaxed font-mono tracking-wide ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
+                {targetTranslationText || 'No translation available'}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Results Modal */}
         <ResultsModal
