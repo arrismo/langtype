@@ -1,11 +1,12 @@
 "use client"
 
+import * as React from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Trophy, Target, Zap, Clock, CheckCircle, XCircle, RotateCcw } from "lucide-react"
-import { useTheme } from "@/app/providers/theme-provider"
+import { useTheme } from "next-themes"
 
 interface ResultsModalProps {
   isOpen: boolean

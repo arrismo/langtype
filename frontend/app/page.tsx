@@ -10,7 +10,7 @@ import { Timer, RotateCcw, Play, Pause, Trophy, Target, Zap, Settings, User, Cro
 import { ResultsModal } from "./components/results-modal"
 import { samplePrompts, Prompt, Language as AppLanguage } from "./data/texts"
 import { ThemeToggle } from "./components/theme-toggle"
-import { useTheme } from "./providers/theme-provider"
+import { useTheme } from "next-themes"
 
 type TestMode = "easy" | "hard"
 type Language = AppLanguage
