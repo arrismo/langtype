@@ -18,6 +18,7 @@ type Language = AppLanguage
 const DEFAULT_DURATION = 60; // seconds
 
 export default function TypingTest() {
+  const [mounted, setMounted] = useState(false);
   const { theme } = useTheme()
   const isDark = theme === "dark"
 
@@ -39,6 +40,10 @@ export default function TypingTest() {
   const [currentHighlightWordIndex, setCurrentHighlightWordIndex] = useState(0)
 
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const generateText = useCallback(() => {
     const randomPrompt = samplePrompts[Math.floor(Math.random() * samplePrompts.length)];
@@ -249,10 +254,16 @@ export default function TypingTest() {
     };
   }, [initializeTest, handleKeyPressLogic, showResults]);
 
+
+
+  if (!mounted) {
+    return null; 
+  }
+
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-300 font-mono">
+    <div className="min-h-screen bg-background text-foreground font-mono">
       {/* Header */}
-      <header className="flex items-center justify-between px-8 py-4 border-b border-gray-800">
+      <header className="flex items-center justify-between px-8 py-4 border-b border-border">
         <div className="flex items-center space-x-8">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-yellow-400 rounded flex items-center justify-center">
@@ -271,7 +282,7 @@ export default function TypingTest() {
         {/* Test Configuration */}
         <div className="flex items-center justify-center space-x-6 mb-8 text-sm">
           <div className="flex items-center space-x-2">
-            <span className="text-gray-500">source</span>
+            <span className="text-muted-foreground">source</span>
             <Select value={sourceLanguage} onValueChange={(value: Language) => {
               setSourceLanguage(value);
               if (value === translationLanguage) {

@@ -8,7 +8,7 @@ import { Moon, Sun } from "lucide-react"
 
 export function ThemeToggle() {
   const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
+  const { theme, resolvedTheme, setTheme } = useTheme()
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
@@ -30,15 +30,18 @@ export function ThemeToggle() {
     )
   }
 
+  // Determine the actual current theme taking system preference into account
+  const currentTheme = theme === "system" ? resolvedTheme : theme
+
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
       className="rounded-full text-gray-400 hover:text-yellow-400 hover:bg-gray-800 transition-colors"
       aria-label="Toggle theme"
     >
-      {theme === "dark" ? (
+      {currentTheme === "dark" ? (
         <Sun className="h-5 w-5" />
       ) : (
         <Moon className="h-5 w-5" />
