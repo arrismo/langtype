@@ -62,9 +62,9 @@ export function ResultsModal({ isOpen, onClose, onRestart, results }: ResultsMod
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gray-800 border-gray-700 text-gray-200 max-w-md">
+      <DialogContent className="bg-background border-border text-foreground max-w-md sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl font-bold text-yellow-400">
+          <DialogTitle className="text-center text-3xl font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
             Test Complete!
           </DialogTitle>
         </DialogHeader>
@@ -106,7 +106,7 @@ export function ResultsModal({ isOpen, onClose, onRestart, results }: ResultsMod
           </div>
 
           {/* Detailed Stats */}
-          <div className="space-y-3">
+          <div className="space-y-8">
             <div className="flex items-center justify-between p-3 rounded-lg bg-card/30">
               <div className="flex items-center">
                 <Clock className="w-4 h-4 mr-2 text-blue-400" />
@@ -139,14 +139,14 @@ export function ResultsModal({ isOpen, onClose, onRestart, results }: ResultsMod
           </div>
 
           {/* Test Info */}
-          <div className="text-center text-sm text-gray-400">
+          <div className="text-center text-sm text-muted-foreground font-medium">
             {results.mode.charAt(0).toUpperCase() + results.mode.slice(1)} mode •{" "}
             {results.language.charAt(0).toUpperCase() + results.language.slice(1)}
           </div>
 
           {/* Actions */}
           <div className="flex gap-3">
-            <Button onClick={handleRestart} className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-gray-900">
+            <Button onClick={handleRestart} className="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 hover:opacity-90 text-background font-semibold transition-all duration-200">
               <RotateCcw className="w-4 h-4 mr-2" />
               Try Again
             </Button>

@@ -292,7 +292,7 @@ export default function TypingTest() {
               <SelectTrigger className="w-24 h-8 bg-transparent border-border text-foreground">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-border">
+              <SelectContent className="bg-popover border-border">
                 <SelectItem value="english">EN</SelectItem>
                 <SelectItem value="spanish">ES</SelectItem>
               </SelectContent>
@@ -310,7 +310,7 @@ export default function TypingTest() {
               <SelectTrigger className="w-24 h-8 bg-transparent border-border text-foreground">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-border">
+              <SelectContent className="bg-popover border-border">
                 <SelectItem value="english">EN</SelectItem>
                 <SelectItem value="spanish">ES</SelectItem>
               </SelectContent>
@@ -318,12 +318,12 @@ export default function TypingTest() {
           </div>
 
           <div className="flex items-center space-x-2">
-            <span className="text-gray-500">mode</span>
+            <span className="text-muted-foreground">mode</span>
             <Select value={currentMode} onValueChange={(value: TestMode) => setCurrentMode(value)}>
               <SelectTrigger className="w-20 h-8 bg-transparent border-border text-foreground">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-border">
+              <SelectContent className="bg-popover border-border">
                 <SelectItem value="easy">easy</SelectItem>
                 <SelectItem value="hard">hard</SelectItem>
               </SelectContent>
@@ -383,7 +383,7 @@ export default function TypingTest() {
 
         {/* Progress Bar */}
         <div className="mt-8">
-          <div className="w-full bg-gray-800 h-1 rounded-full overflow-hidden">
+          <div className="w-full bg-muted h-1 rounded-full overflow-hidden">
             <div 
               className="h-full bg-yellow-400 transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
