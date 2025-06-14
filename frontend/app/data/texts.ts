@@ -15,7 +15,7 @@ export const easyPrompts: Prompt[] = [
   {
     id: 2,
     english: "Monday Tuesday Wednesday Thursday Friday Saturday Sunday week month year today tomorrow morning night",
-    spanish: "lunes martes miercoles jueves viernes sábado domingo semana mes año hoy mañana mañana noche"
+    spanish: "lunes martes miercoles jueves viernes sabado domingo semana mes año hoy mañana mañana noche"
   },
   {
     id: 3,
@@ -25,12 +25,12 @@ export const easyPrompts: Prompt[] = [
   {
     id: 4,
     english: "dog cat bird fish rabbit horse cow chicken pig mouse animal pet farm zoo wild",
-    spanish: "perro gato pájaro pez conejo caballo vaca pollo cerdo ratón animal mascota granja zoológico salvaje"
+    spanish: "perro gato pajaro pez conejo caballo vaca pollo cerdo ratón animal mascota granja zoológico salvaje"
   },
   {
     id: 5,
     english: "apple banana orange grape lemon strawberry peach pear mango fruit sweet juice fresh eat",
-    spanish: "manzana plátano naranja uva limón fresa melocotón pera mango fruta dulce jugo fresco comer"
+    spanish: "manzana platano naranja uva limón fresa melocotón pera mango fruta dulce jugo fresco comer"
   },
   {
     id: 6,
@@ -80,7 +80,7 @@ export const easyPrompts: Prompt[] = [
   {
     id: 15,
     english: "pencil paper desk chair table door window wall floor room house building office school work",
-    spanish: "lápiz papel escritorio silla mesa puerta ventana pared piso habitación casa edificio oficina escuela trabajo"
+    spanish: "lapiz papel escritorio silla mesa puerta ventana pared piso habitación casa edificio oficina escuela trabajo"
   }
 ];
 
@@ -88,12 +88,12 @@ export const hardPrompts: Prompt[] = [
   {
     id: 1,
     english: "The quick brown fox jumps over the lazy dog",
-    spanish: "El zorro marrón rápido salta sobre el perro perezoso"
+    spanish: "El zorro marrón rapido salta sobre el perro perezoso"
   },
   {
     id: 2,
     english: "I need to practice my Spanish more often",
-    spanish: "Necesito practicar mi español con más frecuencia"
+    spanish: "Necesito practicar mi español con mas frecuencia"
   },
   {
     id: 3,
@@ -113,7 +113,7 @@ export const hardPrompts: Prompt[] = [
   {
     id: 6,
     english: "I forgot my umbrella and now it's raining",
-    spanish: "Olvide mi paraguas y ahora está lloviendo"
+    spanish: "Olvide mi paraguas y ahora esta lloviendo"
   },
   {
     id: 7,
@@ -128,12 +128,12 @@ export const hardPrompts: Prompt[] = [
   {
     id: 9,
     english: "My favorite restaurant is closed on Mondays",
-    spanish: "Mi restaurante favorito está cerrado los lunes"
+    spanish: "Mi restaurante favorito esta cerrado los lunes"
   },
   {
     id: 10,
     english: "The train station is ten minutes from here",
-    spanish: "La estación de tren está a diez minutos de aquí"
+    spanish: "La estación de tren esta a diez minutos de aquí"
   },
   {
     id: 11,

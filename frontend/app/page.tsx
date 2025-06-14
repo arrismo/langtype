@@ -46,15 +46,44 @@ export default function TypingTest() {
     setMounted(true);
   }, []);
 
-  const generateText = useCallback(() => {
+  const generateText = useCallback((isInitial: boolean = false) => {
     const prompts = currentMode === 'easy' ? easyPrompts : hardPrompts;
-    const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
-    if (!randomPrompt) return { source: "", translation: "" };
-
-    let sourceText = randomPrompt[sourceLanguage] || "";
-    let translationText = randomPrompt[translationLanguage] || "";
-
-    return { source: sourceText, translation: translationText };
+    
+    if (isInitial) {
+      // For initial text, combine multiple prompts
+      const numPrompts = 3; // Start with 3 prompts worth of text
+      let combinedSource = [];
+      let combinedTranslation = [];
+      
+      for (let i = 0; i < numPrompts; i++) {
+        const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+        if (randomPrompt) {
+          const sourceWords = (randomPrompt[sourceLanguage] || "").split(" ");
+          const translationWords = (randomPrompt[translationLanguage] || "").split(" ");
+          combinedSource.push(...sourceWords);
+          combinedTranslation.push(...translationWords);
+        }
+      }
+      
+      return {
+        source: combinedSource.join(" "),
+        translation: combinedTranslation.join(" ")
+      };
+    } else {
+      // For subsequent additions, just get one word from a random prompt
+      const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+      if (!randomPrompt) return { source: "", translation: "" };
+      
+      const sourceWords = (randomPrompt[sourceLanguage] || "").split(" ");
+      const translationWords = (randomPrompt[translationLanguage] || "").split(" ");
+      
+      // Get a random word from the prompt
+      const randomIndex = Math.floor(Math.random() * sourceWords.length);
+      return {
+        source: sourceWords[randomIndex] || "",
+        translation: translationWords[randomIndex] || ""
+      };
+    }
   }, [sourceLanguage, translationLanguage, currentMode])
 
   const initializeTest = useCallback(() => {
@@ -69,7 +98,7 @@ export default function TypingTest() {
     setTotalChars(0)
     setProgress(0);
     setCurrentHighlightWordIndex(0);
-    const generated = generateText();
+    const generated = generateText(true);
     setCurrentText(generated.source);
     setTargetTranslationText(generated.translation);
     setShowResults(false)
@@ -106,7 +135,10 @@ export default function TypingTest() {
 
   const handleKeyPressLogic = useCallback((key: string) => {
     if (showResults) return;
-    if (key !== "Backspace" && testActive && typedText.length >= targetTranslationText.length) return;
+    // Remove this check since we're generating text earlier now
+    if (key !== "Backspace" && testActive && typedText.length >= targetTranslationText.length) {
+      return;
+    }
 
     let newTypedText = typedText;
 
@@ -147,13 +179,20 @@ export default function TypingTest() {
     const progressPercent = testActive ? (timeElapsed / selectedDuration) * 100 : 0;
     setProgress(Math.min(100, progressPercent));
 
-    if (newTypedText.length >= targetTranslationText.length && targetTranslationText.length > 0) {
-      endTest();
-    }
+    // Remove this check since we're generating text earlier now
 
     const sourceWordsArray = currentText.split(" ").filter((w) => w !== "");
     const targetWordsArray = targetTranslationText.split(" ").filter((w) => w !== "");
     const typedWordsArray = newTypedText.trim().split(" ").filter((w) => w !== "");
+
+    // Generate one new word when approaching the end
+    if (typedWordsArray.length >= 5 && typedWordsArray.length >= targetWordsArray.length - 5) {
+      const generated = generateText(false);
+      if (generated.source && generated.translation) {
+        setCurrentText(prev => prev + " " + generated.source);
+        setTargetTranslationText(prev => prev + " " + generated.translation);
+      }
+    }
 
     let highlightIndex = 0;
     if (typedWordsArray.length === 0) {
