@@ -402,23 +402,6 @@ export default function TypingTest() {
           </button>
         </div>
 
-        {/* Footer */}
-        <footer className="mt-16 pt-8 border-t border-gray-800 flex justify-between items-center text-xs text-gray-600">
-          <div className="flex space-x-4">
-            <button className="hover:text-yellow-400 transition-colors">contact</button>
-            <button className="hover:text-yellow-400 transition-colors">support</button>
-            <button className="hover:text-yellow-400 transition-colors">github</button>
-            <button className="hover:text-yellow-400 transition-colors">discord</button>
-            <button className="hover:text-yellow-400 transition-colors">twitter</button>
-            <button className="hover:text-yellow-400 transition-colors">terms</button>
-            <button className="hover:text-yellow-400 transition-colors">security</button>
-            <button className="hover:text-yellow-400 transition-colors">privacy</button>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span>v2.28.0</span>
-          </div>
-        </footer>
-
         {/* Results Modal */}
         <ResultsModal
           isOpen={showResults}
