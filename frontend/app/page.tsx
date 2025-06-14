@@ -190,7 +190,7 @@ export default function TypingTest() {
     if (!targetTranslationText && typedText.length === 0) return null;
     if (!targetTranslationText && typedText.length > 0) {
       return typedText.split("").map((char: string, index: number) => (
-        <span key={`typed-${index}`} className="text-gray-300">{char}</span>
+        <span key={`typed-${index}`} className="text-foreground">{char}</span>
       )).concat(
         testActive || typedText.length > 0 ? 
         [<span key="typed-cursor" className="cursor bg-yellow-400 opacity-100 animate-pulse">&nbsp;</span>] 
@@ -202,7 +202,7 @@ export default function TypingTest() {
       let className = "transition-colors duration-75 ";
       if (index < targetTranslationText.length) {
         if (char === targetTranslationText[index]) {
-          className += "text-gray-300";
+          className += "text-foreground";
         } else {
           className += "text-red-400 bg-red-400/20";
         }
@@ -269,7 +269,7 @@ export default function TypingTest() {
             <div className="w-8 h-8 bg-yellow-400 rounded flex items-center justify-center">
               <span className="text-gray-900 font-bold text-sm">LT</span>
             </div>
-            <span className="text-xl font-bold text-gray-200">langtype</span>
+            <span className="text-xl font-bold text-foreground">langtype</span>
           </div>
         </div>
 
@@ -289,10 +289,10 @@ export default function TypingTest() {
                 setTranslationLanguage(value === "english" ? "spanish" : "english");
               }
             }}>
-              <SelectTrigger className="w-24 h-8 bg-transparent border-gray-700 text-gray-300">
+              <SelectTrigger className="w-24 h-8 bg-transparent border-border text-foreground">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-gray-700">
+              <SelectContent className="bg-gray-800 border-border">
                 <SelectItem value="english">EN</SelectItem>
                 <SelectItem value="spanish">ES</SelectItem>
               </SelectContent>
@@ -307,10 +307,10 @@ export default function TypingTest() {
                 setSourceLanguage(value === "english" ? "spanish" : "english");
               }
             }}>
-              <SelectTrigger className="w-24 h-8 bg-transparent border-gray-700 text-gray-300">
+              <SelectTrigger className="w-24 h-8 bg-transparent border-border text-foreground">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-gray-700">
+              <SelectContent className="bg-gray-800 border-border">
                 <SelectItem value="english">EN</SelectItem>
                 <SelectItem value="spanish">ES</SelectItem>
               </SelectContent>
@@ -320,10 +320,10 @@ export default function TypingTest() {
           <div className="flex items-center space-x-2">
             <span className="text-gray-500">mode</span>
             <Select value={currentMode} onValueChange={(value: TestMode) => setCurrentMode(value)}>
-              <SelectTrigger className="w-20 h-8 bg-transparent border-gray-700 text-gray-300">
+              <SelectTrigger className="w-20 h-8 bg-transparent border-border text-foreground">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border-gray-700">
+              <SelectContent className="bg-gray-800 border-border">
                 <SelectItem value="easy">easy</SelectItem>
                 <SelectItem value="hard">hard</SelectItem>
               </SelectContent>
@@ -395,7 +395,7 @@ export default function TypingTest() {
         <div className="flex justify-center mt-8 space-x-4">
           <button 
             onClick={initializeTest}
-            className="flex items-center space-x-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded transition-colors text-sm"
+            className="flex items-center space-x-2 px-4 py-2 bg-accent text-accent-foreground hover:bg-accent/80 rounded border border-border transition-colors text-sm"
           >
             <RotateCcw className="w-4 h-4" />
             <span>restart test</span>

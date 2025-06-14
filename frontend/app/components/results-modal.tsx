@@ -80,11 +80,11 @@ export function ResultsModal({ isOpen, onClose, onRestart, results }: ResultsMod
 
           {/* Main Stats */}
           <div className="grid grid-cols-2 gap-4">
-            <Card className="bg-gray-700/50 border-gray-600">
+            <Card className="bg-card/50 border-border">
               <CardContent className="p-4 text-center">
                 <div className="flex items-center justify-center mb-2">
                   <Zap className="w-5 h-5 mr-2 text-yellow-400" />
-                  <span className="text-sm font-medium text-gray-300">WPM</span>
+                  <span className="text-sm font-medium text-muted-foreground">WPM</span>
                 </div>
                 <div className="text-3xl font-bold text-yellow-400">
                   {results.wpm}
@@ -92,11 +92,11 @@ export function ResultsModal({ isOpen, onClose, onRestart, results }: ResultsMod
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-700/50 border-gray-600">
+            <Card className="bg-card/50 border-border">
               <CardContent className="p-4 text-center">
                 <div className="flex items-center justify-center mb-2">
                   <Target className="w-5 h-5 mr-2 text-green-400" />
-                  <span className="text-sm font-medium text-gray-300">Accuracy</span>
+                  <span className="text-sm font-medium text-muted-foreground">Accuracy</span>
                 </div>
                 <div className="text-3xl font-bold text-green-400">
                   {results.accuracy}%
@@ -107,30 +107,30 @@ export function ResultsModal({ isOpen, onClose, onRestart, results }: ResultsMod
 
           {/* Detailed Stats */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 rounded-lg bg-gray-700/30">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-card/30">
               <div className="flex items-center">
                 <Clock className="w-4 h-4 mr-2 text-blue-400" />
-                <span className="text-gray-300">Time Taken</span>
+                <span className="text-muted-foreground">Time Taken</span>
               </div>
               <span className="font-semibold text-blue-400">
                 {results.timeTaken.toFixed(1)}s
               </span>
             </div>
 
-            <div className="flex items-center justify-between p-3 rounded-lg bg-gray-700/30">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-card/30">
               <div className="flex items-center">
                 <CheckCircle className="w-4 h-4 mr-2 text-green-400" />
-                <span className="text-gray-300">Correct Characters</span>
+                <span className="text-muted-foreground">Correct Characters</span>
               </div>
               <span className="font-semibold text-green-400">
                 {results.correctChars}
               </span>
             </div>
 
-            <div className="flex items-center justify-between p-3 rounded-lg bg-gray-700/30">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-card/30">
               <div className="flex items-center">
                 <XCircle className="w-4 h-4 mr-2 text-red-400" />
-                <span className="text-gray-300">Incorrect Characters</span>
+                <span className="text-muted-foreground">Incorrect Characters</span>
               </div>
               <span className="font-semibold text-red-400">
                 {results.incorrectChars}
@@ -153,7 +153,7 @@ export function ResultsModal({ isOpen, onClose, onRestart, results }: ResultsMod
             <Button
               onClick={onClose}
               variant="outline"
-              className="flex-1 border-gray-600 hover:bg-gray-700 text-gray-300"
+              className="flex-1 border-border hover:bg-gray-700 text-muted-foreground"
             >
               Close
             </Button>
