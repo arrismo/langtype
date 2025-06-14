@@ -15,7 +15,7 @@ import { useTheme } from "next-themes"
 type TestMode = "easy" | "hard"
 type Language = AppLanguage
 
-const DEFAULT_DURATION = 60; // seconds
+type TimeDuration = 15 | 20 | 30 | 50;
 
 export default function TypingTest() {
   const [mounted, setMounted] = useState(false);
@@ -23,6 +23,7 @@ export default function TypingTest() {
   const isDark = theme === "dark"
 
   const [currentMode, setCurrentMode] = useState<TestMode>("easy")
+  const [selectedDuration, setSelectedDuration] = useState<TimeDuration>(30)
   const [sourceLanguage, setSourceLanguage] = useState<Language>("english");
   const [translationLanguage, setTranslationLanguage] = useState<Language>("spanish")
   const [timeElapsed, setTimeElapsed] = useState(0)
@@ -97,6 +98,12 @@ export default function TypingTest() {
     setShowResults(true)
   }, [correctChars, totalChars, timeElapsed])
 
+  useEffect(() => {
+    if (timeElapsed >= selectedDuration) {
+      endTest()
+    }
+  }, [timeElapsed, selectedDuration, endTest])
+
   const handleKeyPressLogic = useCallback((key: string) => {
     if (showResults) return;
     if (key !== "Backspace" && testActive && typedText.length >= targetTranslationText.length) return;
@@ -137,7 +144,7 @@ export default function TypingTest() {
       setAccuracy(0);
     }
 
-    const progressPercent = targetTranslationText.length > 0 ? (newTypedText.length / targetTranslationText.length) * 100 : 0;
+    const progressPercent = testActive ? (timeElapsed / selectedDuration) * 100 : 0;
     setProgress(Math.min(100, progressPercent));
 
     if (newTypedText.length >= targetTranslationText.length && targetTranslationText.length > 0) {
@@ -319,14 +326,35 @@ export default function TypingTest() {
           </div>
 
           <div className="flex items-center space-x-2">
-            <span className="text-muted-foreground">mode</span>
-            <Select value={currentMode} onValueChange={(value: TestMode) => setCurrentMode(value)}>
-              <SelectTrigger className="w-20 h-8 bg-transparent border-border text-foreground">
+            <span className="text-gray-500">mode</span>
+            <Select value={currentMode} onValueChange={(value: TestMode) => {
+              setCurrentMode(value);
+              initializeTest();
+            }}>
+              <SelectTrigger className="w-24 h-8 bg-transparent border-border text-foreground">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-popover border-border">
-                <SelectItem value="easy">easy</SelectItem>
-                <SelectItem value="hard">hard</SelectItem>
+                <SelectItem value="easy">Easy</SelectItem>
+                <SelectItem value="hard">Hard</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <span className="text-gray-500">time</span>
+            <Select value={selectedDuration.toString()} onValueChange={(value: string) => {
+              setSelectedDuration(parseInt(value) as TimeDuration);
+              initializeTest();
+            }}>
+              <SelectTrigger className="w-24 h-8 bg-transparent border-border text-foreground">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-popover border-border">
+                <SelectItem value="15">15s</SelectItem>
+                <SelectItem value="20">20s</SelectItem>
+                <SelectItem value="30">30s</SelectItem>
+                <SelectItem value="50">50s</SelectItem>
               </SelectContent>
             </Select>
           </div>

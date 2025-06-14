@@ -15,7 +15,7 @@ export const easyPrompts: Prompt[] = [
   {
     id: 2,
     english: "Monday Tuesday Wednesday Thursday Friday Saturday Sunday week month year today tomorrow morning night",
-    spanish: "lunes martes miércoles jueves viernes sábado domingo semana mes año hoy mañana mañana noche"
+    spanish: "lunes martes miercoles jueves viernes sábado domingo semana mes año hoy mañana mañana noche"
   },
   {
     id: 3,
@@ -60,12 +60,12 @@ export const easyPrompts: Prompt[] = [
   {
     id: 11,
     english: "bread cheese meat fish egg milk coffee tea sugar salt rice soup dinner lunch breakfast",
-    spanish: "pan queso carne pescado huevo leche café té azúcar sal arroz sopa cena almuerzo desayuno"
+    spanish: "pan queso carne pescado huevo leche cafe te azúcar sal arroz sopa cena almuerzo desayuno"
   },
   {
     id: 12,
     english: "shirt pants shoes socks hat dress coat jacket sweater skirt clothes wear fashion style color",
-    spanish: "camisa pantalón zapatos calcetines sombrero vestido abrigo chaqueta suéter falda ropa vestir moda estilo color"
+    spanish: "camisa pantalón zapatos calcetines sombrero vestido abrigo chaqueta sueter falda ropa vestir moda estilo color"
   },
   {
     id: 13,
@@ -75,7 +75,7 @@ export const easyPrompts: Prompt[] = [
   {
     id: 14,
     english: "doctor nurse hospital sick pain medicine health healthy exercise rest sleep tired strong weak",
-    spanish: "médico enfermera hospital enfermo dolor medicina salud saludable ejercicio descanso dormir cansado fuerte débil"
+    spanish: "medico enfermera hospital enfermo dolor medicina salud saludable ejercicio descanso dormir cansado fuerte debil"
   },
   {
     id: 15,
@@ -113,12 +113,12 @@ export const hardPrompts: Prompt[] = [
   {
     id: 6,
     english: "I forgot my umbrella and now it's raining",
-    spanish: "Olvidé mi paraguas y ahora está lloviendo"
+    spanish: "Olvide mi paraguas y ahora está lloviendo"
   },
   {
     id: 7,
     english: "She always drinks coffee with milk in the morning",
-    spanish: "Ella siempre toma café con leche por la mañana"
+    spanish: "Ella siempre toma cafe con leche por la mañana"
   },
   {
     id: 8,
