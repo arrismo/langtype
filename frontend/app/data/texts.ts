@@ -2,86 +2,162 @@ export interface Prompt {
   id: number;
   english: string;
   spanish: string;
-  // Add other languages here as needed, e.g., french: string;
 }
 
-export const samplePrompts: Prompt[] = [
+export type Language = "english" | "spanish";
+
+export const easyPrompts: Prompt[] = [
   {
     id: 1,
-    english: "The quick brown fox jumps over the lazy dog. It shows great skill and speed as it moves through the thick forest with ease.",
-    spanish: "El zorro rapido y marron salta sobre el perro flojo. Se mueve muy bien y rapido por el bosque.",
+    english: "one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen",
+    spanish: "uno dos tres cuatro cinco seis siete ocho nueve diez once doce trece catorce quince"
   },
   {
     id: 2,
-    english: "In the middle of the busy city, with its tall buildings and noisy streets, many different people meet each other every day.",
-    spanish: "En el centro de la ciudad con mucho movimiento, con edificios altos y calles ocupadas, mucha gente diferente se ve cada dia.",
+    english: "Monday Tuesday Wednesday Thursday Friday Saturday Sunday week month year today tomorrow morning night",
+    spanish: "lunes martes miércoles jueves viernes sábado domingo semana mes año hoy mañana mañana noche"
   },
   {
     id: 3,
-    english: "To be good at programming, you need to know about tech, but also be creative, solve problems, and think in a clear and ordered way about hard problems.",
-    spanish: "Para programar bien, necesitas saber de tecnologia, ser creativo, resolver problemas y pensar de forma clara sobre cosas dificiles.",
+    english: "red blue green yellow orange purple black white brown gray dark light color paint rainbow",
+    spanish: "rojo azul verde amarillo naranja morado negro blanco marrón gris oscuro claro color pintura arcoíris"
   },
   {
     id: 4,
-    english: "When the sun went down, making the sky orange and pink, the old castle stood quietly, having seen many years of history and secret stories.",
-    spanish: "Cuando el sol bajo, el cielo se puso naranja y rosa. El castillo viejo estaba alli, callado, viendo pasar la historia y sus secretos.",
+    english: "dog cat bird fish rabbit horse cow chicken pig mouse animal pet farm zoo wild",
+    spanish: "perro gato pájaro pez conejo caballo vaca pollo cerdo ratón animal mascota granja zoológico salvaje"
   },
   {
     id: 5,
-    english: "New technology has changed how we talk, work, and live. This has made new chances and new problems for everyone.",
-    spanish: "La nueva tecnologia ha cambiado como hablamos, trabajamos y vivimos. Esto ha creado nuevas oportunidades y problemas para todos.",
+    english: "apple banana orange grape lemon strawberry peach pear mango fruit sweet juice fresh eat",
+    spanish: "manzana plátano naranja uva limón fresa melocotón pera mango fruta dulce jugo fresco comer"
   },
   {
     id: 6,
-    english: "A long journey starts with one step, but you have to keep going to do great things.",
-    spanish: "Un viaje largo empieza con un paso. Pero tienes que seguir para lograr grandes cosas.",
+    english: "head eye nose mouth ear hand foot leg arm body face hair finger toe heart",
+    spanish: "cabeza ojo nariz boca oreja mano pie pierna brazo cuerpo cara pelo dedo dedo corazón"
   },
   {
     id: 7,
-    english: "Deep in the ocean, where there is little sun, strange animals have changed in special ways to live in a very tough place.",
-    spanish: "En lo mas hondo del mar, con poca luz, hay animales raros que han cambiado para vivir en un lugar muy dificil.",
+    english: "hello goodbye thank you please yes no home school friend food water mother father book happy",
+    spanish: "hola adiós gracias por favor sí no casa escuela amigo comida agua madre padre libro feliz"
   },
   {
     id: 8,
-    english: "The human brain has billions of connected cells. It is one of the hardest things to understand in the universe.",
-    spanish: "El cerebro de las personas tiene miles de millones de celulas conectadas. Es una de las cosas mas dificiles de entender del universo.",
+    english: "hot cold warm cool sun rain snow wind cloud sky weather summer winter spring fall",
+    spanish: "caliente frío tibio fresco sol lluvia nieve viento nube cielo clima verano invierno primavera otoño"
   },
   {
     id: 9,
-    english: "In the past, great societies grew and then ended. Each one left something behind that still affects our world today.",
-    spanish: "En el pasado, grandes pueblos crecieron y cayeron. Cada uno dejo algo que todavia cambia nuestro mundo.",
+    english: "big small tall short fat thin heavy light new old young beautiful ugly good bad",
+    spanish: "grande pequeño alto bajo gordo delgado pesado ligero nuevo viejo joven hermoso feo bueno malo"
   },
   {
     id: 10,
-    english: "Exploring space shows that people are very curious and always want to see what more we can do.",
-    spanish: "Explorar el espacio muestra que la gente es muy curiosa y siempre quiere hacer mas cosas.",
+    english: "run walk jump swim fly eat drink sleep work play study read write speak listen",
+    spanish: "correr caminar saltar nadar volar comer beber dormir trabajar jugar estudiar leer escribir hablar escuchar"
   },
   {
     id: 11,
-    english: "In the quiet time before sunrise, the world feels still. There is a special feeling in the air that helps you think and be creative.",
-    spanish: "En el silencio antes de que salga el sol, el mundo esta quieto. Hay algo especial en el aire que te ayuda a pensar y crear.",
+    english: "bread cheese meat fish egg milk coffee tea sugar salt rice soup dinner lunch breakfast",
+    spanish: "pan queso carne pescado huevo leche café té azúcar sal arroz sopa cena almuerzo desayuno"
   },
   {
     id: 12,
-    english: "The way supply and demand work together is the base of today's economy. It affects big markets and what people choose to buy.",
-    spanish: "Como funcionan la oferta y la demanda es la base de la economia de hoy. Afecta a los mercados grandes y a lo que la gente compra.",
+    english: "shirt pants shoes socks hat dress coat jacket sweater skirt clothes wear fashion style color",
+    spanish: "camisa pantalón zapatos calcetines sombrero vestido abrigo chaqueta suéter falda ropa vestir moda estilo color"
   },
   {
     id: 13,
-    english: "As computers get smarter, we have to ask big questions about jobs, privacy, and what it means to be smart.",
-    spanish: "Mientras las computadoras se hacen mas listas, hay preguntas importantes sobre el trabajo, la privacidad y que significa ser listo.",
+    english: "car bus train plane bike boat street road bridge station ticket travel trip map guide",
+    spanish: "carro autobús tren avión bicicleta barco calle carretera puente estación boleto viajar viaje mapa guía"
   },
   {
     id: 14,
-    english: "Books from around the world show us different cultures, times in history, and ways of thinking. This helps us understand life better.",
-    spanish: "Los libros de todo el mundo nos ensenan sobre otras culturas, tiempos pasados y formas de pensar. Esto nos ayuda a entender mejor la vida.",
+    english: "doctor nurse hospital sick pain medicine health healthy exercise rest sleep tired strong weak",
+    spanish: "médico enfermera hospital enfermo dolor medicina salud saludable ejercicio descanso dormir cansado fuerte débil"
   },
   {
     id: 15,
-    english: "Climate change is a very big problem today. All countries need to work together and find new answers to make sure we have a good future.",
-    spanish: "El cambio del clima es un problema muy grande ahora. Todos los paises deben trabajar juntos y buscar nuevas ideas para tener un buen futuro.",
+    english: "pencil paper desk chair table door window wall floor room house building office school work",
+    spanish: "lápiz papel escritorio silla mesa puerta ventana pared piso habitación casa edificio oficina escuela trabajo"
   }
 ];
 
-// You can define a type for your languages if you haven't already
-export type Language = "english" | "spanish"; // Add other supported languages
+export const hardPrompts: Prompt[] = [
+  {
+    id: 1,
+    english: "The quick brown fox jumps over the lazy dog",
+    spanish: "El zorro marrón rápido salta sobre el perro perezoso"
+  },
+  {
+    id: 2,
+    english: "I need to practice my Spanish more often",
+    spanish: "Necesito practicar mi español con más frecuencia"
+  },
+  {
+    id: 3,
+    english: "The coffee shop on the corner has great pastries",
+    spanish: "La cafetería de la esquina tiene pasteles excelentes"
+  },
+  {
+    id: 4,
+    english: "My brother's cat likes to sleep in the sun",
+    spanish: "Al gato de mi hermano le gusta dormir al sol"
+  },
+  {
+    id: 5,
+    english: "The library closes at nine o'clock tonight",
+    spanish: "La biblioteca cierra a las nueve esta noche"
+  },
+  {
+    id: 6,
+    english: "I forgot my umbrella and now it's raining",
+    spanish: "Olvidé mi paraguas y ahora está lloviendo"
+  },
+  {
+    id: 7,
+    english: "She always drinks coffee with milk in the morning",
+    spanish: "Ella siempre toma café con leche por la mañana"
+  },
+  {
+    id: 8,
+    english: "The museum has a new art exhibition this week",
+    spanish: "El museo tiene una nueva exposición de arte esta semana"
+  },
+  {
+    id: 9,
+    english: "My favorite restaurant is closed on Mondays",
+    spanish: "Mi restaurante favorito está cerrado los lunes"
+  },
+  {
+    id: 10,
+    english: "The train station is ten minutes from here",
+    spanish: "La estación de tren está a diez minutos de aquí"
+  },
+  {
+    id: 11,
+    english: "I need to buy new shoes for the party",
+    spanish: "Necesito comprar zapatos nuevos para la fiesta"
+  },
+  {
+    id: 12,
+    english: "The movie starts at seven thirty tonight",
+    spanish: "La película empieza a las siete y media esta noche"
+  },
+  {
+    id: 13,
+    english: "Can you help me find my lost keys?",
+    spanish: "¿Puedes ayudarme a encontrar mis llaves perdidas?"
+  },
+  {
+    id: 14,
+    english: "The weather is perfect for a picnic today",
+    spanish: "El clima es perfecto para un picnic hoy"
+  },
+  {
+    id: 15,
+    english: "I like to read books in the park",
+    spanish: "Me gusta leer libros en el parque"
+  }
+]; 

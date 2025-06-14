@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Timer, RotateCcw, Play, Pause, Trophy, Target, Zap, Settings, User, Crown, Info } from "lucide-react"
 import { ResultsModal } from "./components/results-modal"
-import { samplePrompts, Prompt, Language as AppLanguage } from "./data/texts"
+import { easyPrompts, hardPrompts, Prompt, Language as AppLanguage } from "./data/texts"
 import { ThemeToggle } from "./components/theme-toggle"
 import { useTheme } from "next-themes"
 
@@ -46,14 +46,15 @@ export default function TypingTest() {
   }, []);
 
   const generateText = useCallback(() => {
-    const randomPrompt = samplePrompts[Math.floor(Math.random() * samplePrompts.length)];
+    const prompts = currentMode === 'easy' ? easyPrompts : hardPrompts;
+    const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
     if (!randomPrompt) return { source: "", translation: "" };
 
     let sourceText = randomPrompt[sourceLanguage] || "";
     let translationText = randomPrompt[translationLanguage] || "";
 
     return { source: sourceText, translation: translationText };
-  }, [sourceLanguage, translationLanguage])
+  }, [sourceLanguage, translationLanguage, currentMode])
 
   const initializeTest = useCallback(() => {
     setTestActive(false)
@@ -355,15 +356,7 @@ export default function TypingTest() {
           </div>
         </div>
 
-        {/* Translation Display - Only show in Easy mode */}
-        {currentMode === 'easy' && (
-          <div className="mb-8 text-center">
-            <div className="text-sm text-gray-600 mb-2">Translation</div>
-            <div className="text-lg leading-relaxed text-gray-500 max-w-3xl mx-auto">
-              {targetTranslationText || 'No translation available'}
-            </div>
-          </div>
-        )}
+
 
         {/* Stats */}
         <div className="flex justify-center space-x-8 text-sm">
