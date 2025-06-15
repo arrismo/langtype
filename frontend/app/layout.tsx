@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "LangType - Typing Speed Test",
+  title: "LangType",
   description: "Test your typing speed and accuracy with multiple languages and modes",
     generator: 'v0.dev'
 }

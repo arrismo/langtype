@@ -18,6 +18,8 @@ type Language = AppLanguage
 type TimeDuration = 15 | 20 | 30 | 50;
 
 export default function TypingTest() {
+  // Track used prompt IDs for the current test session
+  const [usedPromptIds, setUsedPromptIds] = useState<number[]>([]);
   const [mounted, setMounted] = useState(false);
   const { theme } = useTheme()
   const isDark = theme === "dark"
@@ -47,36 +49,45 @@ export default function TypingTest() {
   }, []);
 
   const generateText = useCallback((isInitial: boolean = false) => {
+    const promptsList = currentMode === 'easy' ? easyPrompts : hardPrompts;
+    // Filter out prompts that have already been used
+    const availablePrompts = promptsList.filter(p => !usedPromptIds.includes(p.id));
     const prompts = currentMode === 'easy' ? easyPrompts : hardPrompts;
     
     if (isInitial) {
-      // For initial text, combine multiple prompts
-      const numPrompts = 3; // Start with 3 prompts worth of text
-      let combinedSource = [];
-      let combinedTranslation = [];
-      
-      for (let i = 0; i < numPrompts; i++) {
-        const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+      // For initial text, combine multiple prompts (no repeats)
+      const numPrompts = 3;
+      let combinedSource: string[] = [];
+      let combinedTranslation: string[] = [];
+      let chosenIds: number[] = [];
+      let available = [...availablePrompts];
+      for (let i = 0; i < numPrompts && available.length > 0; i++) {
+        const idx = Math.floor(Math.random() * available.length);
+        const randomPrompt = available[idx];
+        available.splice(idx, 1);
         if (randomPrompt) {
+          chosenIds.push(randomPrompt.id);
           const sourceWords = (randomPrompt[sourceLanguage] || "").split(" ");
           const translationWords = (randomPrompt[translationLanguage] || "").split(" ");
           combinedSource.push(...sourceWords);
           combinedTranslation.push(...translationWords);
         }
       }
-      
+      setUsedPromptIds(prev => [...prev, ...chosenIds]);
       return {
         source: combinedSource.join(" "),
         translation: combinedTranslation.join(" ")
       };
     } else {
       // For subsequent additions, just get one word from a random prompt
-      const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+      // For subsequent additions, pick from unused prompts, or fallback to any if all are used
+      let pool = availablePrompts.length > 0 ? availablePrompts : promptsList;
+      const idx = Math.floor(Math.random() * pool.length);
+      const randomPrompt = pool[idx];
       if (!randomPrompt) return { source: "", translation: "" };
-      
+      if (availablePrompts.length > 0) setUsedPromptIds(prev => [...prev, randomPrompt.id]);
       const sourceWords = (randomPrompt[sourceLanguage] || "").split(" ");
       const translationWords = (randomPrompt[translationLanguage] || "").split(" ");
-      
       // Get a random word from the prompt
       const randomIndex = Math.floor(Math.random() * sourceWords.length);
       return {
@@ -87,6 +98,7 @@ export default function TypingTest() {
   }, [sourceLanguage, translationLanguage, currentMode])
 
   const initializeTest = useCallback(() => {
+    setUsedPromptIds([]); // Reset used prompts on test restart
     setTestActive(false)
     if (timerRef.current) clearInterval(timerRef.current)
     setStartTime(null)
@@ -235,7 +247,7 @@ export default function TypingTest() {
 
   const renderTypedTranslation = () => {
     if (!testActive && typedText.length === 0) {
-      return <span className="text-gray-900 dark:text-white text-3xl font-medium">Start typing the translation here...</span>;
+      return <span className="text-gray-900 dark:text-white text-lg sm:text-3xl font-medium">Start typing the translation here...</span>;
     }
     if (!targetTranslationText && typedText.length > 0) {
       return typedText.split("").map((char: string, index: number) => (
@@ -312,7 +324,7 @@ export default function TypingTest() {
   return (
     <div className="min-h-screen bg-background text-foreground font-mono">
       {/* Header */}
-      <header className="flex items-center justify-between px-8 py-2 border-b border-border">
+      <header className="flex items-center justify-between px-4 sm:px-8 py-2 border-b border-border">
         <div className="flex items-center space-x-8">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-yellow-400 rounded flex items-center justify-center">
@@ -327,9 +339,9 @@ export default function TypingTest() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-4 max-w-4xl">
+      <div className="container mx-auto px-2 sm:px-4 py-4 max-w-full sm:max-w-4xl">
         {/* Test Configuration */}
-        <div className="flex items-center justify-center space-x-6 mb-4 text-sm">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:space-x-6 mb-4 text-xs sm:text-sm">
           <div className="flex items-center space-x-2">
             <span className="text-muted-foreground">source</span>
             <Select value={sourceLanguage} onValueChange={(value: Language) => {
@@ -410,15 +422,15 @@ export default function TypingTest() {
         </div>
 
         {/* Source Text Display */}
-        <div className="mb-4 text-center">
-          <div className="text-2xl leading-tight text-gray-400 max-w-4xl mx-auto whitespace-normal px-4">
+        <div className="mb-2 text-center">
+          <div className="text-lg sm:text-2xl leading-tight text-gray-400 max-w-full sm:max-w-4xl mx-auto whitespace-normal px-2 sm:px-4 break-words">
             {currentText ? renderSourcePromptDisplay() : <span className="text-gray-600">Loading source prompt...</span>}
           </div>
         </div>
 
         {/* Main Typing Area */}
-        <div className="mb-4">
-          <div className="text-3xl leading-tight font-mono text-center max-w-4xl mx-auto min-h-[80px] flex items-center justify-center">
+        <div className="mb-2">
+          <div className="text-xl sm:text-3xl leading-tight font-mono text-center max-w-full sm:max-w-4xl mx-auto min-h-[56px] sm:min-h-[80px] flex items-center justify-center break-words px-2 sm:px-0">
             <div className="w-full">
               {renderTypedTranslation()}
             </div>
@@ -428,7 +440,7 @@ export default function TypingTest() {
 
 
         {/* Stats */}
-        <div className="flex justify-center space-x-8 text-sm mt-2">
+        <div className="flex justify-center space-x-4 sm:space-x-8 text-xs sm:text-sm mt-2">
           <div className="text-center">
             <div className="text-yellow-400 text-2xl font-bold">{wpm}</div>
             <div className="text-gray-500">wpm</div>
@@ -444,7 +456,7 @@ export default function TypingTest() {
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-4">
+        <div className="mt-2 sm:mt-4">
           <div className="w-full bg-muted h-1 rounded-full overflow-hidden">
             <div 
               className="h-full bg-yellow-400 transition-all duration-300 ease-out"
@@ -454,7 +466,7 @@ export default function TypingTest() {
         </div>
 
         {/* Bottom Controls */}
-        <div className="flex justify-center mt-4 space-x-4">
+        <div className="flex flex-wrap justify-center mt-2 sm:mt-4 gap-2 sm:space-x-4">
           <button 
             onClick={initializeTest}
             className="flex items-center space-x-2 px-4 py-2 bg-accent text-accent-foreground hover:bg-accent/80 rounded border border-border transition-colors text-sm"
