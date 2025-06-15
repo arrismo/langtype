@@ -234,7 +234,9 @@ export default function TypingTest() {
   };
 
   const renderTypedTranslation = () => {
-    if (!targetTranslationText && typedText.length === 0) return null;
+    if (!testActive && typedText.length === 0) {
+      return <span className="text-gray-900 dark:text-white text-3xl font-medium">Start typing the translation here...</span>;
+    }
     if (!targetTranslationText && typedText.length > 0) {
       return typedText.split("").map((char: string, index: number) => (
         <span key={`typed-${index}`} className="text-foreground">{char}</span>
@@ -310,7 +312,7 @@ export default function TypingTest() {
   return (
     <div className="min-h-screen bg-background text-foreground font-mono">
       {/* Header */}
-      <header className="flex items-center justify-between px-8 py-4 border-b border-border">
+      <header className="flex items-center justify-between px-8 py-2 border-b border-border">
         <div className="flex items-center space-x-8">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-yellow-400 rounded flex items-center justify-center">
@@ -325,9 +327,9 @@ export default function TypingTest() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-4 max-w-4xl">
         {/* Test Configuration */}
-        <div className="flex items-center justify-center space-x-6 mb-8 text-sm">
+        <div className="flex items-center justify-center space-x-6 mb-4 text-sm">
           <div className="flex items-center space-x-2">
             <span className="text-muted-foreground">source</span>
             <Select value={sourceLanguage} onValueChange={(value: Language) => {
@@ -408,15 +410,15 @@ export default function TypingTest() {
         </div>
 
         {/* Source Text Display */}
-        <div className="mb-8 text-center">
-          <div className="text-lg leading-relaxed text-gray-400 max-w-3xl mx-auto">
+        <div className="mb-4 text-center">
+          <div className="text-2xl leading-tight text-gray-400 max-w-4xl mx-auto whitespace-normal px-4">
             {currentText ? renderSourcePromptDisplay() : <span className="text-gray-600">Loading source prompt...</span>}
           </div>
         </div>
 
         {/* Main Typing Area */}
-        <div className="mb-8">
-          <div className="text-2xl leading-relaxed font-mono text-center max-w-3xl mx-auto min-h-[120px] flex items-center justify-center">
+        <div className="mb-4">
+          <div className="text-3xl leading-tight font-mono text-center max-w-4xl mx-auto min-h-[80px] flex items-center justify-center">
             <div className="w-full">
               {renderTypedTranslation()}
             </div>
@@ -426,7 +428,7 @@ export default function TypingTest() {
 
 
         {/* Stats */}
-        <div className="flex justify-center space-x-8 text-sm">
+        <div className="flex justify-center space-x-8 text-sm mt-2">
           <div className="text-center">
             <div className="text-yellow-400 text-2xl font-bold">{wpm}</div>
             <div className="text-gray-500">wpm</div>
@@ -442,7 +444,7 @@ export default function TypingTest() {
         </div>
 
         {/* Progress Bar */}
-        <div className="mt-8">
+        <div className="mt-4">
           <div className="w-full bg-muted h-1 rounded-full overflow-hidden">
             <div 
               className="h-full bg-yellow-400 transition-all duration-300 ease-out"
@@ -452,7 +454,7 @@ export default function TypingTest() {
         </div>
 
         {/* Bottom Controls */}
-        <div className="flex justify-center mt-8 space-x-4">
+        <div className="flex justify-center mt-4 space-x-4">
           <button 
             onClick={initializeTest}
             className="flex items-center space-x-2 px-4 py-2 bg-accent text-accent-foreground hover:bg-accent/80 rounded border border-border transition-colors text-sm"

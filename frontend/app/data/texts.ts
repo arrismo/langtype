@@ -15,37 +15,37 @@ export const easyPrompts: Prompt[] = [
   {
     id: 2,
     english: "Monday Tuesday Wednesday Thursday Friday Saturday Sunday week month year today tomorrow morning night",
-    spanish: "lunes martes miercoles jueves viernes sabado domingo semana mes año hoy mañana mañana noche"
+    spanish: "lunes martes miercoles jueves viernes sabado domingo semana mes ano hoy manana manana noche"
   },
   {
     id: 3,
     english: "red blue green yellow orange purple black white brown gray dark light color paint rainbow",
-    spanish: "rojo azul verde amarillo naranja morado negro blanco marrón gris oscuro claro color pintura arcoíris"
+    spanish: "rojo azul verde amarillo naranja morado negro blanco marron gris oscuro claro color pintura arcoiris"
   },
   {
     id: 4,
     english: "dog cat bird fish rabbit horse cow chicken pig mouse animal pet farm zoo wild",
-    spanish: "perro gato pajaro pez conejo caballo vaca pollo cerdo ratón animal mascota granja zoológico salvaje"
+    spanish: "perro gato pajaro pez conejo caballo vaca pollo cerdo raton animal mascota granja zoologico salvaje"
   },
   {
     id: 5,
     english: "apple banana orange grape lemon strawberry peach pear mango fruit sweet juice fresh eat",
-    spanish: "manzana platano naranja uva limón fresa melocotón pera mango fruta dulce jugo fresco comer"
+    spanish: "manzana platano naranja uva limon fresa melocoton pera mango fruta dulce jugo fresco comer"
   },
   {
     id: 6,
     english: "head eye nose mouth ear hand foot leg arm body face hair finger toe heart",
-    spanish: "cabeza ojo nariz boca oreja mano pie pierna brazo cuerpo cara pelo dedo dedo corazón"
+    spanish: "cabeza ojo nariz boca oreja mano pie pierna brazo cuerpo cara pelo dedo dedo corazon"
   },
   {
     id: 7,
     english: "hello goodbye thank you please yes no home school friend food water mother father book happy",
-    spanish: "hola adiós gracias por favor sí no casa escuela amigo comida agua madre padre libro feliz"
+    spanish: "hola adios gracias por favor si no casa escuela amigo comida agua madre padre libro feliz"
   },
   {
     id: 8,
     english: "hot cold warm cool sun rain snow wind cloud sky weather summer winter spring fall",
-    spanish: "caliente frío tibio fresco sol lluvia nieve viento nube cielo clima verano invierno primavera otoño"
+    spanish: "caliente frio tibio fresco sol lluvia nieve viento nube cielo clima verano invierno primavera otono"
   },
   {
     id: 9,
@@ -60,17 +60,17 @@ export const easyPrompts: Prompt[] = [
   {
     id: 11,
     english: "bread cheese meat fish egg milk coffee tea sugar salt rice soup dinner lunch breakfast",
-    spanish: "pan queso carne pescado huevo leche cafe te azúcar sal arroz sopa cena almuerzo desayuno"
+    spanish: "pan queso carne pescado huevo leche cafe te azucar sal arroz sopa cena almuerzo desayuno"
   },
   {
     id: 12,
     english: "shirt pants shoes socks hat dress coat jacket sweater skirt clothes wear fashion style color",
-    spanish: "camisa pantalón zapatos calcetines sombrero vestido abrigo chaqueta sueter falda ropa vestir moda estilo color"
+    spanish: "camisa pantalon zapatos calcetines sombrero vestido abrigo chaqueta sueter falda ropa vestir moda estilo color"
   },
   {
     id: 13,
     english: "car bus train plane bike boat street road bridge station ticket travel trip map guide",
-    spanish: "carro autobús tren avión bicicleta barco calle carretera puente estación boleto viajar viaje mapa guía"
+    spanish: "carro autobus tren avion bicicleta barco calle carretera puente estacion boleto viajar viaje mapa guia"
   },
   {
     id: 14,
@@ -80,7 +80,7 @@ export const easyPrompts: Prompt[] = [
   {
     id: 15,
     english: "pencil paper desk chair table door window wall floor room house building office school work",
-    spanish: "lapiz papel escritorio silla mesa puerta ventana pared piso habitación casa edificio oficina escuela trabajo"
+    spanish: "lapiz papel escritorio silla mesa puerta ventana pared piso habitacion casa edificio oficina escuela trabajo"
   }
 ];
 
@@ -88,12 +88,12 @@ export const hardPrompts: Prompt[] = [
   {
     id: 1,
     english: "The quick brown fox jumps over the lazy dog",
-    spanish: "El zorro marrón rapido salta sobre el perro perezoso"
+    spanish: "El zorro marron rapido salta sobre el perro perezoso"
   },
   {
     id: 2,
     english: "I need to practice my Spanish more often",
-    spanish: "Necesito practicar mi español con mas frecuencia"
+    spanish: "Necesito practicar mi espanol con mas frecuencia"
   },
   {
     id: 3,
