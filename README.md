@@ -1,6 +1,6 @@
-# LangType - Typing Practice Application
+# LangType
 
-This project is a web application designed to help users practice typing in different languages.
+Practice rapid, timed translation typing in multiple languages.
 
 # Credits
 monkeytype.com

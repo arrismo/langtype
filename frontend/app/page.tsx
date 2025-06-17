@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Timer, RotateCcw, Play, Pause, Trophy, Target, Zap, Settings, User, Crown, Info } from "lucide-react"
+import { Timer, RotateCcw, Play, Pause, Trophy, Target, Zap, Settings, User, Crown, Info, Github } from "lucide-react"
 import { ResultsModal } from "./components/results-modal"
 import { easyPrompts, hardPrompts, Prompt, Language as AppLanguage } from "./data/texts"
 import { ThemeToggle } from "./components/theme-toggle"
@@ -324,174 +324,184 @@ export default function TypingTest() {
   return (
     <div className="min-h-screen bg-background text-foreground font-mono">
       {/* Header */}
-      <header className="flex items-center justify-between px-4 sm:px-8 py-2 border-b border-border">
-        <div className="flex items-center space-x-8">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-yellow-400 rounded flex items-center justify-center">
-              <span className="text-gray-900 font-bold text-sm">LT</span>
-            </div>
-            <span className="text-xl font-bold text-foreground">langtype</span>
-          </div>
-        </div>
+      <header className="flex items-center px-4 py-3 sm:px-10 bg-transparent">
+  <span className="flex items-center space-x-3">
+    <div className="w-8 h-8 bg-yellow-400 rounded flex items-center justify-center">
+      <span className="text-gray-900 font-bold text-sm">LT</span>
+    </div>
+    <span className="text-xl font-bold">langtype</span>
+  </span>
+  <div className="ml-auto flex items-center space-x-3">
+    <a
+      href="https://github.com/arrismo/langtype/issues"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="GitHub Issues"
+      className="rounded-full p-1 text-gray-400 hover:text-yellow-400 hover:bg-gray-800 dark:hover:bg-gray-200 dark:hover:text-gray-900 transition-colors"
+      style={{ lineHeight: 0 }}
+    >
+      <Github className="w-6 h-6" />
+    </a>
+    <ThemeToggle />
+  </div>
+</header>
 
-        <div className="flex items-center space-x-4">
-          <ThemeToggle />
-        </div>
-      </header>
+      <main className="flex flex-col items-center justify-start w-full max-w-5xl mx-auto px-2 sm:px-6 pt-6 pb-12">
+  {/* Toolbar */}
+  <div className="flex flex-wrap items-center justify-center gap-6 mb-2 text-xs text-gray-500 w-full">
 
-      <div className="container mx-auto px-2 sm:px-4 py-4 max-w-full sm:max-w-4xl">
-        {/* Test Configuration */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:space-x-6 mb-4 text-xs sm:text-sm">
-          <div className="flex items-center space-x-2">
-            <span className="text-muted-foreground">source</span>
-            <Select value={sourceLanguage} onValueChange={(value: Language) => {
-              setSourceLanguage(value);
-              if (value === translationLanguage) {
-                setTranslationLanguage(value === "english" ? "spanish" : "english");
+    {/* Source Select */}
+    <div className="flex flex-col items-center space-y-1">
+      <span className="text-gray-500 text-xs tracking-wide">source</span>
+      <Select value={sourceLanguage} onValueChange={(value: Language) => { setSourceLanguage(value); if (value === translationLanguage) setTranslationLanguage(value === 'english' ? 'spanish' : 'english'); }}>
+        <SelectTrigger className="w-24 h-9 bg-zinc-900/60 border border-zinc-600 rounded text-gray-100 hover:bg-zinc-800 focus:ring-2 focus:ring-zinc-500 transition-colors">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent className="bg-zinc-800 border-zinc-700 text-gray-100">
+          <SelectItem value="english">EN</SelectItem>
+          <SelectItem value="spanish">ES</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+
+    {/* Target Select */}
+    <div className="flex flex-col items-center space-y-1">
+      <span className="text-gray-500 text-xs tracking-wide">target</span>
+      <Select value={translationLanguage} onValueChange={(value: Language) => { setTranslationLanguage(value); if (value === sourceLanguage) setSourceLanguage(value === 'english' ? 'spanish' : 'english'); }}>
+        <SelectTrigger className="w-24 h-9 bg-zinc-900/60 border border-zinc-600 rounded text-gray-100 hover:bg-zinc-800 focus:ring-2 focus:ring-zinc-500 transition-colors">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent className="bg-zinc-800 border-zinc-700 text-gray-100">
+          <SelectItem value="english">EN</SelectItem>
+          <SelectItem value="spanish">ES</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+
+    {/* Mode Select */}
+    <div className="flex flex-col items-center space-y-1">
+      <span className="text-gray-500 text-xs tracking-wide">mode</span>
+      <Select value={currentMode} onValueChange={(value: TestMode) => { setCurrentMode(value); initializeTest(); }}>
+        <SelectTrigger className="w-24 h-9 bg-zinc-900/60 border border-zinc-600 rounded text-gray-100 hover:bg-zinc-800 focus:ring-2 focus:ring-zinc-500 transition-colors">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent className="bg-zinc-800 border-zinc-700 text-gray-100">
+          <SelectItem value="easy">Easy</SelectItem>
+          <SelectItem value="hard">Hard</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+
+    {/* Time Select */}
+    <div className="flex flex-col items-center space-y-1">
+      <span className="text-gray-500 text-xs tracking-wide">time</span>
+      <Select value={selectedDuration.toString()} onValueChange={(value: string) => { setSelectedDuration(parseInt(value) as TimeDuration); initializeTest(); }}>
+        <SelectTrigger className="w-24 h-9 bg-zinc-900/60 border border-zinc-600 rounded text-gray-100 hover:bg-zinc-800 focus:ring-2 focus:ring-zinc-500 transition-colors">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent className="bg-zinc-800 border-zinc-700 text-gray-100">
+          <SelectItem value="15">15s</SelectItem>
+          <SelectItem value="20">20s</SelectItem>
+          <SelectItem value="30">30s</SelectItem>
+          <SelectItem value="50">50s</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  </div>
+
+  {/* Language Indicator */}
+  <div className="flex justify-center mb-6">
+    <span className="flex items-center gap-2 text-gray-400 text-sm">
+      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+      <span>{sourceLanguage} <span className="mx-1">→</span> {translationLanguage}</span>
+    </span>
+  </div>
+
+  {/* Prompt Area */}
+  <div className="w-full flex flex-col items-center justify-center mt-4 mb-8">
+    <div className="text-xl sm:text-2xl md:text-3xl font-mono text-center text-gray-200 leading-relaxed max-w-5xl mx-auto break-words select-none tracking-wide">
+      {currentText ? (
+        <span className="flex flex-wrap justify-center gap-x-4 gap-y-2">
+          {currentText.split(' ').map((word, idx) => (
+            <span
+              key={idx}
+              className={
+                idx === currentHighlightWordIndex
+                  ? 'text-yellow-400 font-bold transition-colors duration-75'
+                  : idx < currentHighlightWordIndex
+                  ? 'text-zinc-500 font-semibold'
+                  : 'text-gray-400'
               }
-            }}>
-              <SelectTrigger className="w-24 h-8 bg-transparent border-border text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-popover border-border">
-                <SelectItem value="english">EN</SelectItem>
-                <SelectItem value="spanish">ES</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <span className="text-gray-500">target</span>
-            <Select value={translationLanguage} onValueChange={(value: Language) => {
-              setTranslationLanguage(value);
-              if (value === sourceLanguage) {
-                setSourceLanguage(value === "english" ? "spanish" : "english");
-              }
-            }}>
-              <SelectTrigger className="w-24 h-8 bg-transparent border-border text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-popover border-border">
-                <SelectItem value="english">EN</SelectItem>
-                <SelectItem value="spanish">ES</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <span className="text-gray-500">mode</span>
-            <Select value={currentMode} onValueChange={(value: TestMode) => {
-              setCurrentMode(value);
-              initializeTest();
-            }}>
-              <SelectTrigger className="w-24 h-8 bg-transparent border-border text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-popover border-border">
-                <SelectItem value="easy">Easy</SelectItem>
-                <SelectItem value="hard">Hard</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <span className="text-gray-500">time</span>
-            <Select value={selectedDuration.toString()} onValueChange={(value: string) => {
-              setSelectedDuration(parseInt(value) as TimeDuration);
-              initializeTest();
-            }}>
-              <SelectTrigger className="w-24 h-8 bg-transparent border-border text-foreground">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="bg-popover border-border">
-                <SelectItem value="15">15s</SelectItem>
-                <SelectItem value="20">20s</SelectItem>
-                <SelectItem value="30">30s</SelectItem>
-                <SelectItem value="50">50s</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              style={{ minWidth: '2ch', textAlign: 'center' }}
+            >
+              {word}
+            </span>
+          ))}
+        </span>
+      ) : (
+        <span className="text-gray-600">Loading source prompt...</span>
+      )}
+    </div>
+    <div className="mt-8 w-full flex justify-center">
+      <div className="text-xl sm:text-2xl font-mono text-center min-h-[56px] sm:min-h-[80px] flex items-center justify-center break-words px-2 sm:px-0 w-full max-w-4xl">
+        <div className="w-full">
+          {renderTypedTranslation()}
         </div>
-
-        {/* Language indicator */}
-        <div className="flex justify-center mb-6">
-          <div className="flex items-center space-x-2 text-gray-500 text-sm">
-            <span className="w-2 h-2 bg-gray-600 rounded-full"></span>
-            <span>{sourceLanguage}</span>
-          </div>
-        </div>
-
-        {/* Source Text Display */}
-        <div className="mb-2 text-center">
-          <div className="text-lg sm:text-2xl leading-tight text-gray-400 max-w-full sm:max-w-4xl mx-auto whitespace-normal px-2 sm:px-4 break-words">
-            {currentText ? renderSourcePromptDisplay() : <span className="text-gray-600">Loading source prompt...</span>}
-          </div>
-        </div>
-
-        {/* Main Typing Area */}
-        <div className="mb-2">
-          <div className="text-xl sm:text-3xl leading-tight font-mono text-center max-w-full sm:max-w-4xl mx-auto min-h-[56px] sm:min-h-[80px] flex items-center justify-center break-words px-2 sm:px-0">
-            <div className="w-full">
-              {renderTypedTranslation()}
-            </div>
-          </div>
-        </div>
-
-
-
-        {/* Stats */}
-        <div className="flex justify-center space-x-4 sm:space-x-8 text-xs sm:text-sm mt-2">
-          <div className="text-center">
-            <div className="text-yellow-400 text-2xl font-bold">{wpm}</div>
-            <div className="text-gray-500">wpm</div>
-          </div>
-          <div className="text-center">
-            <div className="text-yellow-400 text-2xl font-bold">{accuracy}%</div>
-            <div className="text-gray-500">acc</div>
-          </div>
-          <div className="text-center">
-            <div className="text-yellow-400 text-2xl font-bold">{timeElapsed}s</div>
-            <div className="text-gray-500">time</div>
-          </div>
-        </div>
-
-        {/* Progress Bar */}
-        <div className="mt-2 sm:mt-4">
-          <div className="w-full bg-muted h-1 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-yellow-400 transition-all duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Bottom Controls */}
-        <div className="flex flex-wrap justify-center mt-2 sm:mt-4 gap-2 sm:space-x-4">
-          <button 
-            onClick={initializeTest}
-            className="flex items-center space-x-2 px-4 py-2 bg-accent text-accent-foreground hover:bg-accent/80 rounded border border-border transition-colors text-sm"
-          >
-            <RotateCcw className="w-4 h-4" />
-            <span>restart test</span>
-          </button>
-        </div>
-
-        {/* Results Modal */}
-        <ResultsModal
-          isOpen={showResults}
-          onClose={() => setShowResults(false)}
-          onRestart={initializeTest}
-          results={{
-            mode: currentMode,
-            language: sourceLanguage,
-            wpm,
-            accuracy,
-            correctChars,
-            incorrectChars: totalChars - correctChars,
-            timeTaken: startTime ? (Date.now() - startTime) / 1000 : 0,
-          }}
-        />
       </div>
+    </div>
+  </div>
+
+  {/* Stats Bar */}
+  <div className="flex justify-center space-x-16 text-lg sm:text-xl font-mono font-semibold text-gray-400 mb-2">
+    <div className="flex flex-col items-center">
+      <span className="text-yellow-400 text-2xl">{wpm}</span>
+      <span className="text-gray-500 text-xs mt-1">wpm</span>
+    </div>
+    <div className="flex flex-col items-center">
+      <span className="text-yellow-400 text-2xl">{accuracy}%</span>
+      <span className="text-gray-500 text-xs mt-1">acc</span>
+    </div>
+    <div className="flex flex-col items-center">
+      <span className="text-yellow-400 text-2xl">{timeElapsed}s</span>
+      <span className="text-gray-500 text-xs mt-1">time</span>
+    </div>
+  </div>
+
+  {/* Progress Bar */}
+  <div className="w-full max-w-3xl mx-auto bg-muted h-1 rounded-full overflow-hidden mb-6">
+    <div 
+      className="h-full bg-yellow-400 transition-all duration-300 ease-out"
+      style={{ width: `${progress}%` }}
+    />
+  </div>
+
+  {/* Restart Button */}
+  <div className="flex justify-center mt-2 mb-6">
+    <button 
+      onClick={initializeTest}
+      className="flex items-center space-x-2 px-6 py-2 bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-semibold rounded transition-colors text-base shadow"
+    >
+      <RotateCcw className="w-5 h-5 mr-1" />
+      <span>restart test</span>
+    </button>
+  </div>
+
+  {/* Results Modal */}
+  <ResultsModal
+    isOpen={showResults}
+    onClose={() => setShowResults(false)}
+    onRestart={initializeTest}
+    results={{
+      mode: currentMode,
+      language: sourceLanguage,
+      wpm,
+      accuracy,
+      correctChars,
+      incorrectChars: totalChars - correctChars,
+      timeTaken: timeElapsed,
+    }}
+  />
+</main>
     </div>
   )
 }

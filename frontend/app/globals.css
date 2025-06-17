@@ -32,7 +32,8 @@
   }
 
   .dark {
-    --background: 17 17% 7%;
+    /* Tailwind gray-900: hsl(222 47% 11%) */
+    --background: 222.2 47.4% 11.2%;
     --foreground: 210 40% 98%;
     --card: 17 17% 7%;
     --card-foreground: 210 40% 98%;
@@ -64,7 +65,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gray-900 text-gray-100;
   }
 }
 
